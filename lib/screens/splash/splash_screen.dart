@@ -5,6 +5,7 @@ import '../../widgets/app_background.dart';
 import '../../screens/home/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../auth/login_screen.dart';
+import '../../screens/splash/role_selection_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,10 +28,7 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(seconds: 2),
     );
 
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
 
     _controller.forward();
 
@@ -44,28 +42,24 @@ class _SplashScreenState extends State<SplashScreen>
       );
     });*/
     Timer(const Duration(seconds: 3), () {
-  if (!mounted) return;
+      if (!mounted) return;
 
-  final user = FirebaseAuth.instance.currentUser;
+      final user = FirebaseAuth.instance.currentUser;
 
-  if (user != null) {
-    // ✅ User logged in
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const HomeScreen(),
-      ),
-    );
-  } else {
-    // ❌ Not logged in
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const LoginScreen(),
-      ),
-    );
-  }
-});
+      if (user != null) {
+        // ✅ User already logged in
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      } else {
+        // ✅ Go to Role Selection Screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
+        );
+      }
+    });
   }
 
   @override
@@ -85,10 +79,7 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/images/logo.png',
-                  height: 120,
-                ),
+                Image.asset('assets/images/logo.png', height: 120),
                 const SizedBox(height: 20),
                 const Text(
                   'Cure Mate',
@@ -99,9 +90,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
                 const SizedBox(height: 30),
-                const CircularProgressIndicator(
-                  color: Colors.white,
-                ),
+                const CircularProgressIndicator(color: Colors.white),
               ],
             ),
           ),

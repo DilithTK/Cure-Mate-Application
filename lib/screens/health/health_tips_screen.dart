@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import '../../core/theme/color.dart';
 import '../../core/services/ai_service.dart';
 
-class HealthTipsScreen extends StatefulWidget {
-  const HealthTipsScreen({super.key});
+class MedicineExplainerScreen extends StatefulWidget {
+  const MedicineExplainerScreen({super.key});
 
   @override
-  State<HealthTipsScreen> createState() => _HealthTipsScreenState();
+  State<MedicineExplainerScreen> createState() => _MedicineExplainerScreenState();
 }
 
-class _HealthTipsScreenState extends State<HealthTipsScreen> {
+class _MedicineExplainerScreenState extends State<MedicineExplainerScreen> {
   final TextEditingController controller = TextEditingController();
-
-  List<Map<String, String>> messages = [];
+  final List<Map<String, String>> messages = [];
   bool isLoading = false;
 
   Future<void> sendMessage() async {
@@ -26,6 +25,7 @@ class _HealthTipsScreenState extends State<HealthTipsScreen> {
 
     controller.clear();
 
+    // Gemini API එකෙන් response එක ගමු
     String botReply = await AIService.getChatResponse(userMessage);
 
     setState(() {
@@ -34,47 +34,12 @@ class _HealthTipsScreenState extends State<HealthTipsScreen> {
     });
   }
 
-  Widget buildMessage(Map<String, String> msg) {
-    bool isUser = msg["role"] == "user";
-
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      elevation: 4,
-      color: isUser ? AppColors.primary : Colors.white,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Row(
-          children: [
-            if (!isUser)
-              const Icon(Icons.health_and_safety, color: AppColors.primary),
-            if (!isUser) const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                msg["text"]!,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: isUser ? Colors.white : Colors.black,
-                ),
-              ),
-            ),
-            if (isUser) const SizedBox(width: 10),
-            if (isUser)
-              const Icon(Icons.person, color: Colors.white),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        title: const Text("Health Tips Chatbot"),
+        title: const Text("Medicine Explainer"), // නම වෙනස් කළා
         backgroundColor: AppColors.primary,
         elevation: 0,
       ),
@@ -86,11 +51,15 @@ class _HealthTipsScreenState extends State<HealthTipsScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: const [
-                        Icon(Icons.health_and_safety, size: 50, color: AppColors.primary),
+                        Icon(Icons.medication, size: 60, color: AppColors.primary),
                         SizedBox(height: 15),
-                        Text(
-                          "Ask a health question to get tips.",
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 30),
+                          child: Text(
+                            "Enter medicine names from your prescription to know what they do.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
                         ),
                       ],
                     ),
@@ -98,9 +67,7 @@ class _HealthTipsScreenState extends State<HealthTipsScreen> {
                 : ListView.builder(
                     padding: const EdgeInsets.all(10),
                     itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      return buildMessage(messages[index]);
-                    },
+                    itemBuilder: (context, index) => buildMessage(messages[index]),
                   ),
           ),
           if (isLoading)
@@ -108,37 +75,61 @@ class _HealthTipsScreenState extends State<HealthTipsScreen> {
               padding: EdgeInsets.all(10),
               child: CircularProgressIndicator(),
             ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    decoration: const InputDecoration(
-                      hintText: "Ask a health question...",
-                      border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: sendMessage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                  ),
-                  child: const Icon(Icons.send, color: Colors.white),
-                ),
-              ],
+          _buildInputArea(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputArea() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: "Enter medicine name...",
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                fillColor: Colors.white,
+                filled: true,
+              ),
             ),
           ),
+          const SizedBox(width: 8),
+          IconButton.filled(
+            onPressed: isLoading ? null : sendMessage,
+            icon: const Icon(Icons.send),
+            style: IconButton.styleFrom(backgroundColor: AppColors.primary),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget buildMessage(Map<String, String> msg) {
+    bool isUser = msg["role"] == "user";
+    return Align(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: isUser ? AppColors.primary : Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(20),
+            topRight: const Radius.circular(20),
+            bottomLeft: Radius.circular(isUser ? 20 : 0),
+            bottomRight: Radius.circular(isUser ? 0 : 20),
+          ),
+          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+        ),
+        child: Text(
+          msg["text"]!,
+          style: TextStyle(color: isUser ? Colors.white : Colors.black87, fontSize: 15),
+        ),
       ),
     );
   }

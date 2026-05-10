@@ -1,37 +1,3 @@
-/*import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
-
-  @override
-  State<MapScreen> createState() => _PharmacyListScreenState();
-}
-
-class _PharmacyListScreenState extends State<MapScreen> {
-  final CameraPosition _initialPosition = const CameraPosition(
-    target: LatLng(6.9271, 79.8612), // Colombo coordinates
-    zoom: 12,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Pharmacy Map")),
-      body: GoogleMap(
-        initialCameraPosition: _initialPosition,
-        markers: {
-          const Marker(
-            markerId: MarkerId("pharmacy1"),
-            position: LatLng(6.9271, 79.8612),
-            infoWindow: InfoWindow(title: "HealthPlus Pharmacy"),
-          ),
-        },
-      ),
-    );
-  }
-}*/
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -48,77 +14,166 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController? mapController;
 
-  LatLng _currentPosition = const LatLng(6.9271, 79.8612);
+  LatLng? _currentPosition;
 
   final Set<Marker> _markers = {};
 
-  final String apiKey = "API key 4"; 
+  // 🔑 Replace with your real API key
+  final String apiKey = "API key 4";
+
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    _initializeMap();
   }
 
-  // 📍 Get user location
+  // 🚀 Initialize
+  Future<void> _initializeMap() async {
+    await _getCurrentLocation();
+    await _fetchNearbyPharmaciesSmart();
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  // 📍 Get current location
   Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Location ON check
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!serviceEnabled) {
+      throw Exception("Location services are disabled.");
+    }
+
+    // Permission check
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception("Location permission permanently denied.");
+    }
+
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
 
-    setState(() {
-      _currentPosition = LatLng(position.latitude, position.longitude);
-    });
-
-    _fetchNearbyPharmacies();
+    _currentPosition = LatLng(
+      position.latitude,
+      position.longitude,
+    );
   }
 
-  // 🏥 Google Places API call
-  Future<void> _fetchNearbyPharmacies() async {
-    final url =
-        "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
-        "?location=${_currentPosition.latitude},${_currentPosition.longitude}"
-        "&radius=3000"
-        "&type=pharmacy"
-        "&key=$apiKey";
+  // 🏥 Smart radius search
+  Future<void> _fetchNearbyPharmaciesSmart() async {
+    List<int> radiusList = [500, 1000, 3000];
 
-    final response = await http.get(Uri.parse(url));
+    for (int radius in radiusList) {
+      final url =
+          "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+          "?location=${_currentPosition!.latitude},${_currentPosition!.longitude}"
+          "&radius=$radius"
+          "&type=pharmacy"
+          "&key=$apiKey";
 
-    final data = json.decode(response.body);
+      final response = await http.get(Uri.parse(url));
 
-    if (data["results"] != null) {
-      for (var place in data["results"]) {
-        final marker = Marker(
-          markerId: MarkerId(place["place_id"]),
-          position: LatLng(
-            place["geometry"]["location"]["lat"],
-            place["geometry"]["location"]["lng"],
-          ),
-          infoWindow: InfoWindow(
-            title: place["name"],
-            snippet: place["vicinity"],
-          ),
-        );
+      final data = json.decode(response.body);
 
-        setState(() {
+      if (data["results"] != null &&
+          data["results"].length > 0) {
+
+        _markers.clear();
+
+        for (var place in data["results"]) {
+
+          final double lat =
+              place["geometry"]["location"]["lat"];
+
+          final double lng =
+              place["geometry"]["location"]["lng"];
+
+          // 📏 Distance calculate
+          double distance =
+              Geolocator.distanceBetween(
+            _currentPosition!.latitude,
+            _currentPosition!.longitude,
+            lat,
+            lng,
+          );
+
+          final marker = Marker(
+            markerId: MarkerId(place["place_id"]),
+
+            position: LatLng(lat, lng),
+
+            infoWindow: InfoWindow(
+              title: place["name"],
+              snippet:
+                  "${place["vicinity"]}\n${distance.toStringAsFixed(0)}m away",
+            ),
+
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueRed,
+            ),
+          );
+
           _markers.add(marker);
-        });
+        }
+
+        setState(() {});
+
+        print("Found pharmacies within ${radius}m");
+
+        return;
       }
     }
+
+    // ❌ No pharmacies found
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("No pharmacies found nearby"),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Nearby Pharmacies")),
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: _currentPosition,
-          zoom: 14,
+
+    // ⏳ Loading
+    if (isLoading || _currentPosition == null) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
         ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Nearby Pharmacies"),
+      ),
+
+      body: GoogleMap(
+
+        initialCameraPosition: CameraPosition(
+          target: _currentPosition!,
+          zoom: 15,
+        ),
+
         markers: _markers,
+
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
+
         onMapCreated: (controller) {
           mapController = controller;
         },

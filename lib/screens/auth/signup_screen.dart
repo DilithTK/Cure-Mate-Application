@@ -4,7 +4,6 @@ import '../../widgets/custom_textfield.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/social_row.dart';
 import '../../core/services/firebase_auth_service.dart';
-import '../Phamacist/pharmacy_dashboard.dart';
 import 'login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -18,9 +17,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool agreeTerms = false;
   bool isLoading = false;
 
-  // Role
-  String selectedRole = "Patient";
-
   // Controllers
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -28,7 +24,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
-  final TextEditingController pharmacyIdController = TextEditingController();
 
   final AuthService _authService = AuthService();
 
@@ -41,14 +36,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-    if (selectedRole == "Pharmacist" &&
-        pharmacyIdController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Enter Pharmacy ID")),
-      );
-      return;
-    }
-
     setState(() => isLoading = true);
 
     String? result = await _authService.signUp(
@@ -57,10 +44,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       passwordController.text.trim(),
       mobileController.text.trim(),
       locationController.text.trim(),
-      selectedRole,
-      selectedRole == "Pharmacist"
-          ? pharmacyIdController.text.trim()
-          : null,
     );
 
     setState(() => isLoading = false);
@@ -70,19 +53,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const SnackBar(content: Text("Signup Successful")),
       );
 
-      // Role based navigation
-      if (selectedRole == "Pharmacist") {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const PharmacyDashboard()),
-          (route) => false,
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(result)),
@@ -98,7 +72,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     passwordController.dispose();
     confirmPasswordController.dispose();
     locationController.dispose();
-    pharmacyIdController.dispose();
     super.dispose();
   }
 
@@ -160,60 +133,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             const SizedBox(height: 15),
 
             CustomTextField("Location", controller: locationController),
-            const SizedBox(height: 15),
-
-            // Role Dropdown
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Select Role",
-                  style: TextStyle(color: Colors.white70),
-                ),
-                const SizedBox(height: 6),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.white24),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: selectedRole,
-                      isExpanded: true,
-                      dropdownColor: Colors.black,
-                      style: const TextStyle(color: Colors.white),
-                      icon: const Icon(Icons.keyboard_arrow_down,
-                          color: Colors.white),
-
-                      items: ["Patient", "Pharmacist"]
-                          .map((role) => DropdownMenuItem(
-                                value: role,
-                                child: Text(role),
-                              ))
-                          .toList(),
-
-                      onChanged: (value) {
-                        setState(() {
-                          selectedRole = value!;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            // Conditional field
-            if (selectedRole == "Pharmacist") ...[
-              const SizedBox(height: 15),
-              CustomTextField(
-                "Pharmacy ID",
-                controller: pharmacyIdController,
-              ),
-            ],
 
             const SizedBox(height: 20),
 

@@ -201,15 +201,21 @@ class _UploadPrescriptionScreenState extends State<UploadPrescriptionScreen> {
     );
   }
 }*/
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart'; // ✅ NEW
 
+import '../pharmacy/user_pharmacy_response_screen.dart';
 import '../../core/theme/color.dart';
 import '../../widgets/custom_button.dart';
+
+import '../../core/services/pharmacy_service.dart';
+import '../../core/services/location_service.dart';
 
 class UploadPrescriptionScreen extends StatefulWidget {
   const UploadPrescriptionScreen({super.key});
@@ -224,6 +230,9 @@ class _UploadPrescriptionScreenState extends State<UploadPrescriptionScreen> {
   bool isProcessing = false;
 
   final ImagePicker _picker = ImagePicker();
+
+  final pharmacyService = PharmacyService();
+  final locationService = LocationService();
 
   Future<void> _pickImage(ImageSource source) async {
     final XFile? picked = await _picker.pickImage(
@@ -241,9 +250,15 @@ class _UploadPrescriptionScreenState extends State<UploadPrescriptionScreen> {
   Future<String> uploadImage(File file) async {
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
 
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw Exception("User not logged in");
+
+    final uid = user.uid;
+
     final ref = FirebaseStorage.instance
         .ref()
         .child('prescriptions')
+        .child(uid)
         .child('$fileName.jpg');
 
     UploadTask uploadTask = ref.putFile(
@@ -268,22 +283,52 @@ class _UploadPrescriptionScreenState extends State<UploadPrescriptionScreen> {
     try {
       String uid = FirebaseAuth.instance.currentUser!.uid;
 
+      /// 1️⃣ Upload Image
       String imageUrl = await uploadImage(_image!);
 
-      await FirebaseFirestore.instance.collection('prescriptions').add({
+      /// 2️⃣ Save Prescription
+      final docRef = await FirebaseFirestore.instance
+          .collection('prescriptions')
+          .add({
         'patientId': uid,
         'imageUrl': imageUrl,
         'status': 'pending',
         'createdAt': FieldValue.serverTimestamp(),
       });
 
+      final prescriptionId = docRef.id;
+
+
+      /// 3️⃣ Get User Location
+      final position = await locationService.getLocation();
+
+      /// 4️⃣ Find nearby pharmacies + send requests
+      await pharmacyService.findNearbyAndSend(
+        prescriptionId: prescriptionId,
+        lat: position.latitude,
+        lng: position.longitude,
+      );
+
+      
+
       if (!mounted) return;
+
+      setState(() => _image = null);
+
+      /// 5️⃣ Navigate to response screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => UserPharmacyResponseScreen(
+            prescriptionId: prescriptionId,
+          ),
+        ),
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Uploaded successfully")),
       );
 
-      setState(() => _image = null);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Upload failed: $e")),
@@ -320,6 +365,7 @@ class _UploadPrescriptionScreenState extends State<UploadPrescriptionScreen> {
               ),
             ),
             const SizedBox(height: 20),
+
             Row(
               children: [
                 Expanded(
@@ -339,7 +385,9 @@ class _UploadPrescriptionScreenState extends State<UploadPrescriptionScreen> {
                 ),
               ],
             ),
+
             const SizedBox(height: 20),
+
             CustomButton(
               isProcessing ? "Uploading..." : "Upload",
               onPressed: isProcessing ? null : uploadPrescription,

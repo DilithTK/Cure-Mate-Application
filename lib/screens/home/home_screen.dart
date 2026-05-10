@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/color.dart';
 
-import 'dashboard_screen.dart';
+import 'user_dashboard_screen.dart';
 import '../../screens/prescriptions/upload_prescription_screen.dart';
 import '../../screens/pharmacy/pharmacy_list_screen.dart';
 import '../../screens/profile/profile_screen.dart';
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   // 🔥 FIXED (4 pages)
-  final List<Widget> _pages = const [
+  final List<Widget> _pages =  [
     DashboardPage(),
     UploadPrescriptionScreen(),
     PharmacyListScreen(), // ✅ FIX

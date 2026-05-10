@@ -1,58 +1,26 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:google_generative_ai/google_generative_ai.dart';
 
 class AIService {
+   
+  static const String _apiKey = "AIzaSyCoAJlm9pJw_Dc9T7eu5WxviVT7FkaGLLE";
 
-  // Replace with your NEW OpenAI API key
-  static const String apiKey = "api";
-
-  /// Get a chat response (user message → AI reply)
-  static Future<String> getChatResponse(String message) async {
-
-    final url = Uri.parse("https://api.openai.com/v1/chat/completions");
-
+  static Future<String> getChatResponse(String userMessage) async {
     try {
-
-      final response = await http.post(
-        url,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $apiKey",
-        },
-        body: jsonEncode({
-          "model": "gpt-4o-mini",
-          "messages": [
-            {"role": "system", "content": "You are a helpful health assistant."},
-            {"role": "user", "content": message} // <-- use user input
-          ],
-          "max_tokens": 100
-        }),
+      final model = GenerativeModel(
+        
+        model: 'gemini-pro', 
+        apiKey: _apiKey,
       );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data["choices"][0]["message"]["content"].toString().trim();
-      } else {
-        print("API Error: ${response.body}");
-        return "Unable to fetch health tip.";
-      }
-
+      final content = [
+        
+        Content.text("User instruction: You are a medical expert. Only answer about medicines. User question: $userMessage")
+      ];
+      
+      final response = await model.generateContent(content);
+      return response.text ?? "Sorry, I couldn't understand that.";
     } catch (e) {
-      print("Error: $e");
-      return "Network error. Please try again.";
+      return "Error: $e";
     }
-
   }
-
-  /// Optional: Generate multiple tips (reuses getChatResponse)
-  static Future<List<String>> getMultipleTips(int count) async {
-    List<String> tips = [];
-    for (int i = 0; i < count; i++) {
-      final tip = await getChatResponse(
-          "Give one short health tip in 1-2 sentences.");
-      tips.add(tip);
-    }
-    return tips;
-  }
-
 }

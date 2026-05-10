@@ -59,7 +59,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //currentIndex: 1, // 🔥 මේ screen එකට අදාල tab index එක
+      //currentIndex: 1, 
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

@@ -19,7 +19,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
 
-  final firestore = FirestoreService();
+  final firestore = FirestoreService.instance;
   final user = FirebaseAuth.instance.currentUser;
 
   bool isLoading = false;

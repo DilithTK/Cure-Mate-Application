@@ -4,7 +4,7 @@ import '../../widgets/dashboard_card.dart';
 import '../../screens/prescriptions/upload_prescription_screen.dart';
 import '../../screens/pharmacy/pharmacy_list_screen.dart';
 import '../../screens/reminders/reminder_list_screen.dart';
-import '../../screens/pharmacy/pharmacy_response_screen.dart';
+import '../pharmacy/user_pharmacy_response_screen.dart';
 import '../../screens/prescriptions/order_history.dart';
 import '../../screens/health/health_tips_screen.dart';
 
@@ -55,7 +55,6 @@ class DashboardPage extends StatelessWidget {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               children: [
-
                 DashboardCard(
                   icon: Icons.upload_outlined,
                   title: "Upload\nPrescription",
@@ -69,16 +68,15 @@ class DashboardPage extends StatelessWidget {
                   },
                 ),
 
-                // ❗ FIXED HERE (removed const + added dummy navigation note)
                 DashboardCard(
                   icon: Icons.history,
                   title: "Pharmacy\nResponse",
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          "Open from prescription after upload",
-                        ),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const PharmacyListScreen(),
                       ),
                     );
                   },
@@ -130,7 +128,7 @@ class DashboardPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const HealthTipsScreen(),
+                        builder: (_) => const MedicineExplainerScreen(),
                       ),
                     );
                   },

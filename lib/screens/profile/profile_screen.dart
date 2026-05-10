@@ -12,7 +12,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final firestore = FirestoreService();
+    final firestore = FirestoreService.instance;
     final authService = AuthService();
 
     if (user == null) {

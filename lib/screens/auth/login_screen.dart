@@ -6,7 +6,7 @@ import '../../widgets/custom_button.dart';
 import '../../widgets/social_row.dart';
 import '../../core/services/firebase_auth_service.dart';
 import 'signup_screen.dart';
-import '../phamacist/pharmacy_dashboard.dart';
+import '../auth/ForgotPasswordScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   bool isLoading = false;
 
-  // 🚀 LOGIN FUNCTION (FIXED)
   void loginUser() async {
     setState(() => isLoading = true);
 
@@ -38,22 +37,12 @@ class _LoginScreenState extends State<LoginScreen> {
         const SnackBar(content: Text("Login Successful")),
       );
 
-      // 🔥 GET ROLE
-      String? role = await _authService.getUserRole();
-
-      if (role == "Pharmacist") {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const PharmacyDashboard()),
-          (route) => false,
-        );
-      } else {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-          (route) => false,
-        );
-      }
+      // 🔥 NO ROLE LOGIC → DIRECT HOME
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(result)),
@@ -81,10 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 60),
 
             Center(
-              child: Image.asset(
-                'assets/images/logo.png',
-                height: 100,
-              ),
+              child: Image.asset('assets/images/logo.png', height: 100),
             ),
 
             const SizedBox(height: 20),
@@ -107,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
             ),
+
             const SizedBox(height: 15),
 
             CustomTextField(
@@ -127,12 +114,19 @@ class _LoginScreenState extends State<LoginScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ForgotPasswordScreen(),
+                    ),
+                  );
+                },
                 child: const Text(
                   "Forgot Password?",
                   style: TextStyle(
                     color: Colors.white70,
-                    decoration: TextDecoration.underline,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -161,7 +155,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
                     ),
                   ),
                 ),
