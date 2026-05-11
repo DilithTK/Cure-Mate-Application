@@ -220,10 +220,6 @@ class _PharmacyDashboardScreenState
     );
   }
 
-  // ======================================================
-  // DESKTOP LAYOUT
-  // ======================================================
-
   Widget _desktopLayout() {
 
     return Row(

@@ -4,7 +4,7 @@ import '../../widgets/dashboard_card.dart';
 import '../../screens/prescriptions/upload_prescription_screen.dart';
 import '../../screens/pharmacy/pharmacy_list_screen.dart';
 import '../../screens/reminders/reminder_list_screen.dart';
-import '../pharmacy/user_pharmacy_response_screen.dart';
+import '../pharmacy/user_response_screen.dart';
 import '../../screens/prescriptions/order_history.dart';
 import '../../screens/health/health_tips_screen.dart';
 
@@ -76,7 +76,9 @@ class DashboardPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) =>
-                            const PharmacyListScreen(),
+                            const UserResponseScreen(
+                              
+                            ),
                       ),
                     );
                   },

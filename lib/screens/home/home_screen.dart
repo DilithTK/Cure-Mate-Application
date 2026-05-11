@@ -5,6 +5,7 @@ import 'user_dashboard_screen.dart';
 import '../../screens/prescriptions/upload_prescription_screen.dart';
 import '../../screens/pharmacy/pharmacy_list_screen.dart';
 import '../../screens/profile/profile_screen.dart';
+import '../../screens/splash/role_selection_screen.dart';
 
 import '../../widgets/app_background.dart';
 import '../../widgets/custom_appbar.dart';
@@ -34,10 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   // 🔥 FIXED (4 pages)
-  final List<Widget> _pages =  [
+  final List<Widget> _pages = const [
     DashboardPage(),
     UploadPrescriptionScreen(),
-    PharmacyListScreen(), // ✅ FIX
+    PharmacyListScreen(), 
     ProfileScreen(),
   ];
 
@@ -144,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
                   (route) => false,
                 );
               }),

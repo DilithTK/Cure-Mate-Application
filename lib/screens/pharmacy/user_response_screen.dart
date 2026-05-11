@@ -282,184 +282,132 @@ class _PharmacyResponseScreenState
   }
 }*/
 
-
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserPharmacyResponseScreen extends StatefulWidget {
-  final String prescriptionId;
-
-  const UserPharmacyResponseScreen({
-    super.key,
-    required this.prescriptionId,
-  });
-
-  @override
-  State<UserPharmacyResponseScreen> createState() =>
-      _UserPharmacyResponseScreenState();
-}
-
-class _UserPharmacyResponseScreenState
-    extends State<UserPharmacyResponseScreen> {
+class UserResponseScreen extends StatelessWidget {
+  const UserResponseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    final responseRef = FirebaseFirestore.instance
-        .collection('prescriptions')
-        .doc(widget.prescriptionId)
-        .collection('responses');
-
     return Scaffold(
-      backgroundColor: const Color(0xFF6FA3A7),
+      backgroundColor: const Color(0xffDDF3EE),
 
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF6FA3A7),
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          "Pharmacy Responses",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      body: SafeArea(
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('prescriptions')
+              .orderBy('createdAt', descending: true)
+              .snapshots(),
 
-      body: StreamBuilder<QuerySnapshot>(
-        stream: responseRef.snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-        builder: (context, snapshot) {
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Center(child: Text("No prescriptions found"));
+            }
 
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-              ),
-            );
-          }
+            final prescriptions = snapshot.data!.docs;
 
-          if (!snapshot.hasData ||
-              snapshot.data!.docs.isEmpty) {
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: prescriptions.length,
 
-            return const Center(
-              child: Text(
-                "No pharmacy responses yet",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-            );
-          }
+              itemBuilder: (context, index) {
+                final data =
+                    prescriptions[index].data() as Map<String, dynamic>;
 
-          final docs = snapshot.data!.docs;
+                final imageUrl = data['imageUrl']?.toString() ?? '';
+                final pharmacyName =
+                    data['pharmacyName']?.toString() ?? 'Pharmacy';
+                final status = data['status']?.toString() ?? 'Pending';
+                final price = data['price']?.toString() ?? '0';
+                final note = data['note']?.toString() ?? 'No details';
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: docs.length,
+                Color statusColor = Colors.orange;
+                if (status == "Available") statusColor = Colors.green;
+                if (status == "Unavailable") statusColor = Colors.red;
 
-            itemBuilder: (context, index) {
-
-              final data =
-                  docs[index].data() as Map<String, dynamic>;
-
-              final pharmacyName =
-                  data['pharmacyName'] ??
-                      "Unknown Pharmacy";
-
-              final availability =
-                  data['availability'] ??
-                      "Unavailable";
-
-              Color statusColor;
-              IconData statusIcon;
-
-              if (availability == "Available") {
-                statusColor = Colors.green;
-                statusIcon = Icons.check_circle;
-              } else if (availability == "Partial") {
-                statusColor = Colors.orange;
-                statusIcon = Icons.warning;
-              } else {
-                statusColor = Colors.red;
-                statusIcon = Icons.cancel;
-              }
-
-              return Container(
-                margin: const EdgeInsets.only(bottom: 14),
-
-                padding: const EdgeInsets.all(16),
-
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-
-                child: Row(
-                  children: [
-
-                    /// PHARMACY ICON
-                    CircleAvatar(
-                      radius: 26,
-                      backgroundColor:
-                          statusColor.withOpacity(0.15),
-
-                      child: Icon(
-                        Icons.local_pharmacy,
-                        color: statusColor,
-                      ),
-                    ),
-
-                    const SizedBox(width: 14),
-
-                    /// DETAILS
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
-
-                        children: [
-
-                          Text(
-                            pharmacyName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-
-                          const SizedBox(height: 6),
-
-                          Row(
-                            children: [
-
-                              Icon(
-                                statusIcon,
-                                color: statusColor,
-                                size: 18,
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        imageUrl.isNotEmpty
+                            ? Image.network(
+                                imageUrl,
+                                width: 80,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: 80,
+                                    height: 100,
+                                    color: Colors.grey,
+                                    child: const Icon(Icons.broken_image),
+                                  );
+                                },
+                              )
+                            : Container(
+                                width: 80,
+                                height: 100,
+                                color: Colors.grey,
+                                child: const Icon(Icons.image),
                               ),
 
-                              const SizedBox(width: 6),
+                        const SizedBox(width: 12),
+
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                pharmacyName,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                              const SizedBox(height: 8),
 
                               Text(
-                                availability,
+                                status,
                                 style: TextStyle(
                                   color: statusColor,
-                                  fontWeight:
-                                      FontWeight.w600,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              Text(note),
+
+                              const SizedBox(height: 8),
+
+                              Text(
+                                "Rs. $price",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

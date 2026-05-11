@@ -201,21 +201,20 @@ class _UploadPrescriptionScreenState extends State<UploadPrescriptionScreen> {
     );
   }
 }*/
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart'; // ✅ NEW
 
-import '../pharmacy/user_pharmacy_response_screen.dart';
 import '../../core/theme/color.dart';
 import '../../widgets/custom_button.dart';
 
 import '../../core/services/pharmacy_service.dart';
 import '../../core/services/location_service.dart';
+
+import '../pharmacy/user_response_screen.dart';
 
 class UploadPrescriptionScreen extends StatefulWidget {
   const UploadPrescriptionScreen({super.key});
@@ -287,41 +286,33 @@ class _UploadPrescriptionScreenState extends State<UploadPrescriptionScreen> {
       String imageUrl = await uploadImage(_image!);
 
       /// 2️⃣ Save Prescription
-      final docRef = await FirebaseFirestore.instance
-          .collection('prescriptions')
-          .add({
+      await FirebaseFirestore.instance.collection('prescriptions').add({
         'patientId': uid,
         'imageUrl': imageUrl,
         'status': 'pending',
+        'pharmacyResponse': null,
         'createdAt': FieldValue.serverTimestamp(),
       });
-
-      final prescriptionId = docRef.id;
-
 
       /// 3️⃣ Get User Location
       final position = await locationService.getLocation();
 
-      /// 4️⃣ Find nearby pharmacies + send requests
+      /// 4️⃣ Send to nearby pharmacies
       await pharmacyService.findNearbyAndSend(
-        prescriptionId: prescriptionId,
+        prescriptionId: "auto",
         lat: position.latitude,
         lng: position.longitude,
       );
-
-      
 
       if (!mounted) return;
 
       setState(() => _image = null);
 
-      /// 5️⃣ Navigate to response screen
+      /// 5️⃣ Navigate (NO ID NEEDED NOW)
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => UserPharmacyResponseScreen(
-            prescriptionId: prescriptionId,
-          ),
+          builder: (_) => const UserResponseScreen(),
         ),
       );
 
@@ -350,6 +341,7 @@ class _UploadPrescriptionScreenState extends State<UploadPrescriptionScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+
             GestureDetector(
               onTap: () => _pickImage(ImageSource.gallery),
               child: Container(
@@ -364,6 +356,7 @@ class _UploadPrescriptionScreenState extends State<UploadPrescriptionScreen> {
                     : const Center(child: Text("Tap to select image")),
               ),
             ),
+
             const SizedBox(height: 20),
 
             Row(
