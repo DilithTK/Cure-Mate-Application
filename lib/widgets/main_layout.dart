@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import '../core/theme/color.dart';
 import 'custom_appbar.dart';
+<<<<<<< HEAD
+=======
+
+// Screens
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
 import '../screens/home/home_screen.dart';
 import '../screens/prescriptions/find_pharmacies_screen.dart';
 import '../screens/pharmacy/pharmacy_list_screen.dart';
@@ -39,10 +44,17 @@ class _MainLayoutState extends State<MainLayout> {
       appBar: CustomAppBar(
         title: _titles[_currentIndex],
         onBellTap: () {
+<<<<<<< HEAD
           
         },
         onMenuTap: () {
           
+=======
+          // TODO: Navigate to notifications
+        },
+        onMenuTap: () {
+          // TODO: Open drawer / menu
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
         },
       ),
 

@@ -18,7 +18,11 @@ class _MapScreenState extends State<MapScreen> {
 
   final Set<Marker> _markers = {};
 
+<<<<<<< HEAD
   
+=======
+  // 🔑 Replace with your real API key
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   final String apiKey = "API key 4";
 
   bool isLoading = true;
@@ -29,7 +33,11 @@ class _MapScreenState extends State<MapScreen> {
     _initializeMap();
   }
 
+<<<<<<< HEAD
 
+=======
+  // 🚀 Initialize
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> _initializeMap() async {
     await _getCurrentLocation();
     await _fetchNearbyPharmaciesSmart();
@@ -39,19 +47,31 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+<<<<<<< HEAD
   
+=======
+  // 📍 Get current location
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
 
+<<<<<<< HEAD
     
+=======
+    // Location ON check
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     if (!serviceEnabled) {
       throw Exception("Location services are disabled.");
     }
 
+<<<<<<< HEAD
     
+=======
+    // Permission check
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
     permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
@@ -72,7 +92,11 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+<<<<<<< HEAD
   
+=======
+  // 🏥 Smart radius search
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> _fetchNearbyPharmaciesSmart() async {
     List<int> radiusList = [500, 1000, 3000];
 
@@ -101,7 +125,11 @@ class _MapScreenState extends State<MapScreen> {
           final double lng =
               place["geometry"]["location"]["lng"];
 
+<<<<<<< HEAD
           
+=======
+          // 📏 Distance calculate
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
           double distance =
               Geolocator.distanceBetween(
             _currentPosition!.latitude,
@@ -137,7 +165,11 @@ class _MapScreenState extends State<MapScreen> {
       }
     }
 
+<<<<<<< HEAD
    
+=======
+    // ❌ No pharmacies found
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("No pharmacies found nearby"),

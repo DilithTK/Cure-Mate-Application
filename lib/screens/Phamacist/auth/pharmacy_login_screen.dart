@@ -16,6 +16,7 @@ class _PharmacyLoginScreenState
     extends State<PharmacyLoginScreen> {
 
   bool isLoading = false;
+<<<<<<< HEAD
   bool obscurePassword = true;
 
   final TextEditingController emailController =
@@ -23,6 +24,8 @@ class _PharmacyLoginScreenState
 
   final TextEditingController passwordController =
       TextEditingController();
+=======
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
 
   Future<void> loginUser() async {
 
@@ -30,6 +33,10 @@ class _PharmacyLoginScreenState
       isLoading = true;
     });
 
+<<<<<<< HEAD
+=======
+    // DEMO LOADING
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
     await Future.delayed(
       const Duration(seconds: 2),
     );
@@ -39,18 +46,33 @@ class _PharmacyLoginScreenState
     });
 
     Navigator.pushReplacement(
+<<<<<<< HEAD
       context,
       MaterialPageRoute(
         builder: (_) =>
               PharmacyDashboardScreen(),
       ),
     );
+=======
+    context,
+
+    MaterialPageRoute(
+      builder: (_) =>
+          const PharmacyDashboardScreen(),
+    ),
+  );
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+<<<<<<< HEAD
+=======
+      backgroundColor: Colors.transparent,
+
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -61,14 +83,20 @@ class _PharmacyLoginScreenState
             end: Alignment.bottomCenter,
 
             colors: [
+<<<<<<< HEAD
               Color(0xFF7DA7A7),
               Color(0xFFDCE8E7),
+=======
+              Color(0xFF6D9EA0),
+              Color(0xFFBFD4D2),
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
             ],
           ),
         ),
 
         child: SafeArea(
           child: SingleChildScrollView(
+<<<<<<< HEAD
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 28,
@@ -265,6 +293,205 @@ class _PharmacyLoginScreenState
                     alignment: Alignment.centerRight,
 
                     child: GestureDetector(
+=======
+            padding: const EdgeInsets.all(25),
+
+            child: Column(
+              children: [
+
+                const SizedBox(height: 30),
+
+                /// LOGO
+
+                Center(
+                  child: Image.asset(
+                    "assets/images/logo.png",
+                    height: 120,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// TITLE
+
+                const Text(
+                  "WELCOME",
+
+                  style: TextStyle(
+                    fontSize: 34,
+                    letterSpacing: 2,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+
+                const SizedBox(height: 50),
+
+                /// EMAIL FIELD
+
+                TextField(
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+
+                  decoration: InputDecoration(
+                    hintText:
+                        "Pharmacy Email Address",
+
+                    filled: true,
+
+                    fillColor:
+                        Colors.white.withOpacity(
+                      0.15,
+                    ),
+
+                    border: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(
+                        5,
+                      ),
+
+                      borderSide:
+                          BorderSide.none,
+                    ),
+
+                    hintStyle:
+                        const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                /// PASSWORD FIELD
+
+                TextField(
+                  obscureText: true,
+
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+
+                  decoration: InputDecoration(
+                    hintText: "Password",
+
+                    filled: true,
+
+                    fillColor:
+                        Colors.white.withOpacity(
+                      0.15,
+                    ),
+
+                    border: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(
+                        5,
+                      ),
+
+                      borderSide:
+                          BorderSide.none,
+                    ),
+
+                    hintStyle:
+                        const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                /// FORGOT PASSWORD
+
+                Align(
+                  alignment: Alignment.centerLeft,
+
+                  child: TextButton(
+                    onPressed: () {
+
+                      Navigator.push(
+                        context,
+
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              const ForgotPasswordScreen(),
+                        ),
+                      );
+                    },
+
+                    child: const Text(
+                      "Forgot Password ?",
+
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight:
+                            FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                /// LOGIN BUTTON
+
+                SizedBox(
+                  width: 180,
+                  height: 45,
+
+                  child: ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(
+                      backgroundColor:
+                          const Color(
+                        0xFF5D8D90,
+                      ),
+
+                      disabledBackgroundColor:
+                          const Color(
+                        0xFF5D8D90,
+                      ),
+                    ),
+
+                    onPressed:
+                        isLoading
+                            ? null
+                            : loginUser,
+
+                    child: Text(
+                      isLoading
+                          ? "Loading..."
+                          : "Log In",
+
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                /// SIGN UP
+
+                Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.center,
+
+                  children: [
+
+                    const Text(
+                      "Don't have an account ? ",
+
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+
+                    GestureDetector(
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
                       onTap: () {
 
                         Navigator.push(
@@ -272,12 +499,17 @@ class _PharmacyLoginScreenState
 
                           MaterialPageRoute(
                             builder: (_) =>
+<<<<<<< HEAD
                                 const ForgotPasswordScreen(),
+=======
+                                const PharmacySignupScreen(),
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
                           ),
                         );
                       },
 
                       child: const Text(
+<<<<<<< HEAD
                         "Forgot Password?",
 
                         style: TextStyle(
@@ -342,6 +574,22 @@ class _PharmacyLoginScreenState
                   //const SizedBox(height: 40),
                 ],
               ),
+=======
+                        "Sign Up",
+
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight:
+                              FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 30),
+              ],
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
             ),
           ),
         ),

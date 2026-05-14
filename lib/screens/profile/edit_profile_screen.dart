@@ -30,7 +30,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     loadUserData();
   }
 
+<<<<<<< HEAD
   //  LOAD EXISTING DATA FROM FIRESTORE
+=======
+  // 🔥 LOAD EXISTING DATA FROM FIRESTORE
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> loadUserData() async {
     if (user == null) return;
 
@@ -48,7 +52,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+<<<<<<< HEAD
   //  SAVE UPDATED DATA
+=======
+  // 🔥 SAVE UPDATED DATA
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> _saveProfile() async {
     if (user == null) return;
 
@@ -96,14 +104,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             const SizedBox(height: 16),
 
+<<<<<<< HEAD
            
+=======
+            // 👤 Name
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
             CustomTextField(
               "Full Name",
               controller: _nameController,
             ),
             const SizedBox(height: 16),
 
+<<<<<<< HEAD
             
+=======
+            // 📧 Email (read only)
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
             CustomTextField(
               "Email",
               controller: _emailController,
@@ -111,7 +127,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             const SizedBox(height: 16),
 
+<<<<<<< HEAD
             
+=======
+            // 📱 Mobile
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
             CustomTextField(
               "Mobile",
               controller: _mobileController,
@@ -119,14 +139,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             const SizedBox(height: 16),
 
+<<<<<<< HEAD
             
+=======
+            // 📍 Location
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
             CustomTextField(
               "Location",
               controller: _locationController,
             ),
             const SizedBox(height: 24),
 
+<<<<<<< HEAD
             
+=======
+            // 🔥 Save button
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
             CustomButton(
               isLoading ? "Saving..." : "Save Changes",
               onPressed: isLoading ? null : _saveProfile,

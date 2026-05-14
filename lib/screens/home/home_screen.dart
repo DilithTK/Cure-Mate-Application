@@ -34,7 +34,11 @@ class _HomeScreenState extends State<HomeScreen> {
     "My Profile",
   ];
 
+<<<<<<< HEAD
 
+=======
+  // 🔥 FIXED (4 pages)
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   final List<Widget> _pages = const [
     DashboardPage(),
     UploadPrescriptionScreen(),
@@ -79,7 +83,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+<<<<<<< HEAD
   
+=======
+  // =========================
+  // Bottom Sheet Menu
+  // =========================
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
 
   void _showMenu(BuildContext context) {
     showModalBottomSheet(
@@ -135,7 +145,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const Divider(),
 
+<<<<<<< HEAD
               
+=======
+              // 🔥 LOGOUT (FULLY WORKING)
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
               _menuItem(Icons.logout, "Logout", () async {
                 Navigator.pop(context);
 

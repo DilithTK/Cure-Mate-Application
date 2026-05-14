@@ -6,7 +6,11 @@ class PharmacyService {
     required double lat,
     required double lng,
   }) async {
+<<<<<<< HEAD
     
+=======
+    // 🔥 TEMP LOGIC (later improve karanna puluwan)
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
     final pharmacies =
         await FirebaseFirestore.instance.collection('pharmacies').get();
 

@@ -46,7 +46,11 @@ class DashboardPage extends StatelessWidget {
 
         const SizedBox(height: 25),
 
+<<<<<<< HEAD
         
+=======
+        // 🔲 Dashboard Grid
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),

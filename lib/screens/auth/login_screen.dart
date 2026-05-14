@@ -37,7 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
         const SnackBar(content: Text("Login Successful")),
       );
 
+<<<<<<< HEAD
       
+=======
+      // 🔥 NO ROLE LOGIC → DIRECT HOME
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -161,7 +165,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
 
+<<<<<<< HEAD
             const SizedBox(height: 60),
+=======
+            const SizedBox(height: 30),
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
 
             const SocialRow(),
           ],

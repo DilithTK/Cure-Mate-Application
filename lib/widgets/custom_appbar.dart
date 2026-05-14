@@ -20,7 +20,11 @@ class CustomAppBar extends StatelessWidget
       backgroundColor: AppColors.primary,
       elevation: 0,
 
+<<<<<<< HEAD
       
+=======
+      // 🟢 Logo + Title
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
       title: Row(
         children: [
           Image.asset(
@@ -37,7 +41,11 @@ class CustomAppBar extends StatelessWidget
         ],
       ),
 
+<<<<<<< HEAD
       
+=======
+      // 🔔 Bell + ☰ Menu
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
       actions: [
         IconButton(
           icon: const Icon(Icons.notifications_none),

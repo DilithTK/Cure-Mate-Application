@@ -30,6 +30,7 @@ void main() {
   });
 }*/
 
+<<<<<<< HEAD
 import 'package:flutter_test/flutter_test.dart';
 import 'package:curemate_app/main.dart';
 
@@ -42,5 +43,26 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(CureMateApp), findsOneWidget);
+=======
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:curemate_app/main.dart';
+
+void main() {
+  testWidgets('CureMate app starts', (WidgetTester tester) async {
+
+    // Build app
+    await tester.pumpWidget(const CureMateApp());
+
+    // Wait a bit for async/splash
+    await tester.pump(const Duration(seconds: 3));
+
+    // Let UI settle
+    await tester.pumpAndSettle();
+
+    // Just check app is running (safe check)
+    expect(find.byType(MaterialApp), findsOneWidget);
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   });
 }

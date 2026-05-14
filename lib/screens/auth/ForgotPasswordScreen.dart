@@ -33,10 +33,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     try {
       String email = emailController.text.trim();
 
+<<<<<<< HEAD
       //  Send reset email 
       await _auth.sendPasswordResetEmail(email: email);
 
       
+=======
+      // 🔥 1. Send reset email (MAIN METHOD)
+      await _auth.sendPasswordResetEmail(email: email);
+
+      // 🔥 2. OPTIONAL: update Firestore user status (NOT password)
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
       QuerySnapshot userDoc = await _firestore
           .collection("users")
           .where("email", isEqualTo: email)

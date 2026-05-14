@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
     "functions": [
         {
@@ -36,3 +37,6 @@
         }
     }
 }
+=======
+{"functions":[{"source":"functions","codebase":"default","ignore":["node_modules",".git","firebase-debug.log","firebase-debug.*.log","*.local"]}],"flutter":{"platforms":{"android":{"default":{"projectId":"curemate-application","appId":"1:508605399608:android:dfbd0c0b0d1f5e3d4d9ccd","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"curemate-application","configurations":{"android":"1:508605399608:android:dfbd0c0b0d1f5e3d4d9ccd","ios":"1:508605399608:ios:0cc2109beac357d04d9ccd","macos":"1:508605399608:ios:0cc2109beac357d04d9ccd","web":"1:508605399608:web:a21a01210aad47af4d9ccd","windows":"1:508605399608:web:c69ef0471ce5eb5e4d9ccd"}}}}}}
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0

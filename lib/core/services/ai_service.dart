@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -41,6 +42,31 @@ class AIService {
       }
     } catch (e) {
       return "Something went wrong: $e";
+=======
+import 'package:google_generative_ai/google_generative_ai.dart';
+
+class AIService {
+   
+  static const String _apiKey = "AIzaSyCoAJlm9pJw_Dc9T7eu5WxviVT7FkaGLLE";
+
+  static Future<String> getChatResponse(String userMessage) async {
+    try {
+      final model = GenerativeModel(
+        
+        model: 'gemini-pro', 
+        apiKey: _apiKey,
+      );
+
+      final content = [
+        
+        Content.text("User instruction: You are a medical expert. Only answer about medicines. User question: $userMessage")
+      ];
+      
+      final response = await model.generateContent(content);
+      return response.text ?? "Sorry, I couldn't understand that.";
+    } catch (e) {
+      return "Error: $e";
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
     }
   }
 }

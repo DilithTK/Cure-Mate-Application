@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+<<<<<<< HEAD
 import 'package:flutter/foundation.dart';
 
+=======
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
 import '../../core/theme/color.dart';
 import '../../widgets/app_background.dart';
 import '../../screens/home/home_screen.dart';
@@ -21,8 +24,11 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _animation;
 
+<<<<<<< HEAD
   User? _user; 
 
+=======
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   @override
   void initState() {
     super.initState();
@@ -32,6 +38,7 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(seconds: 2),
     );
 
+<<<<<<< HEAD
     _animation = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
@@ -54,11 +61,37 @@ class _SplashScreenState extends State<SplashScreen>
 
       
       if (_user != null) {
+=======
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+
+    _controller.forward();
+
+    /*Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const HomeScreen(),
+        ),
+      );
+    });*/
+    Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        // ✅ User already logged in
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
       } else {
+<<<<<<< HEAD
+=======
+        // ✅ Go to Role Selection Screen
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
@@ -77,7 +110,11 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: AppBackground(
+<<<<<<< HEAD
         useImage: true,
+=======
+        useImage: true, // 👈 Splash uses background image
+>>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
         child: Center(
           child: FadeTransition(
             opacity: _animation,
