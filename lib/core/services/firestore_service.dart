@@ -1,13 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geoflutterfire2/geoflutterfire2.dart';
 
 class FirestoreService {
   FirestoreService._();
   static final FirestoreService instance = FirestoreService._();
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final GeoFlutterFire geo = GeoFlutterFire();
-
 
   Future<void> addUserWithId(
     String uid,
@@ -27,7 +24,6 @@ class FirestoreService {
     });
   }
 
-
   Future<void> addPharmacyWithId({
     required String uid,
     required String name,
@@ -40,11 +36,6 @@ class FirestoreService {
       double latitude = 6.9271;
       double longitude = 79.8612;
 
-      GeoFirePoint point = geo.point(
-        latitude: latitude,
-        longitude: longitude,
-      );
-
       await _db.collection('pharmacies').doc(uid).set({
         'uid': uid,
         'name': name,
@@ -52,9 +43,12 @@ class FirestoreService {
         'email': email,
         'mobile': mobile,
         'location': location,
-        'position': point.data,
+
+        // ✅ GeoPoint instead of GeoFlutterFire
+        'position': GeoPoint(latitude, longitude),
         'latitude': latitude,
         'longitude': longitude,
+
         'role': 'pharmacy',
         'isApproved': true,
         'createdAt': FieldValue.serverTimestamp(),
@@ -67,7 +61,6 @@ class FirestoreService {
     }
   }
 
-
   Stream<QuerySnapshot> getUsers() {
     return _db.collection('users').snapshots();
   }
@@ -76,7 +69,6 @@ class FirestoreService {
     return await _db.collection('users').doc(uid).get();
   }
 
- 
   Future<void> updateUser(
     String uid,
     Map<String, dynamic> data,
@@ -84,24 +76,15 @@ class FirestoreService {
     await _db.collection('users').doc(uid).update(data);
   }
 
-
-  Stream<List<DocumentSnapshot>> getNearbyPharmacies({
+  // ⚠️ SIMPLE VERSION (no geoflutterfire)
+  Stream<QuerySnapshot> getNearbyPharmacies({
     required double lat,
     required double lng,
-    double radius = 0.5,
+    double radiusKm = 5,
   }) {
-    GeoFirePoint center = geo.point(
-      latitude: lat,
-      longitude: lng,
-    );
+    // NOTE: Firestore cannot do real radius queries without geohash
+    // This is basic fallback (you can improve later)
 
-    return geo
-        .collection(collectionRef: _db.collection('pharmacies'))
-        .within(
-          center: center,
-          radius: radius,
-          field: 'position',
-          strictMode: true,
-        );
+    return _db.collection('pharmacies').snapshots();
   }
 }

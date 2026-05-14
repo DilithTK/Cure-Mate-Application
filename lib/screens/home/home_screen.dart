@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../core/theme/color.dart';
+import '../../core/services/notification_service.dart';
+import '../../core/services/firebase_auth_service.dart';
 
 import 'user_dashboard_screen.dart';
 import '../../screens/prescriptions/upload_prescription_screen.dart';
@@ -10,8 +14,7 @@ import '../../screens/splash/role_selection_screen.dart';
 import '../../widgets/app_background.dart';
 import '../../widgets/custom_appbar.dart';
 
-import '../../core/services/firebase_auth_service.dart';
-
+import '../notifications/user_notification_screen.dart';
 import '../auth/login_screen.dart';
 import '../auth/signup_screen.dart';
 
@@ -37,24 +40,45 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = const [
     DashboardPage(),
     UploadPrescriptionScreen(),
-    PharmacyListScreen(), 
+    PharmacyListScreen(),
     ProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      NotificationService.subscribeUser(user.uid);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
         title: _titles[_currentIndex],
+
+         
         onBellTap: () {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Notifications")));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const UserNotificationScreen(),
+            ),
+          );
         },
+
         onMenuTap: () {
           _showMenu(context);
         },
       ),
+
       body: AppBackground(child: _pages[_currentIndex]),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: AppColors.primary,
@@ -66,13 +90,22 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.description),
             label: "Prescriptions",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: "Map"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: "Map",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "Profile",
+          ),
         ],
       ),
     );
@@ -92,24 +125,19 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               _menuItem(Icons.person, "Profile", () {
                 Navigator.pop(context);
-                setState(() {
-                  _currentIndex = 3;
-                });
+                setState(() => _currentIndex = 3);
               }),
 
               _menuItem(Icons.history, "My Prescriptions", () {
                 Navigator.pop(context);
-                // TODO
               }),
 
               _menuItem(Icons.settings, "Settings", () {
                 Navigator.pop(context);
-                // TODO
               }),
 
               const Divider(),
 
-              // 🔐 AUTH
               _menuItem(Icons.login, "Login", () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -137,9 +165,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 await _authService.logout();
 
+                if (!context.mounted) return;
+
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const RoleSelectionScreen(),
+                  ),
                   (route) => false,
                 );
               }),

@@ -1,10 +1,3 @@
-import org.gradle.api.tasks.Delete
-
-plugins {
-    // Firebase Google Services plugin (NEW recommended way)
-    id("com.google.gms.google-services") version "4.4.2" apply false
-}
-
 allprojects {
     repositories {
         google()

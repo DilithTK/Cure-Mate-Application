@@ -15,6 +15,12 @@ class _MedicineExplainerScreenState extends State<MedicineExplainerScreen> {
   final List<Map<String, String>> messages = [];
   bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    AIService.newChat();
+  }
+
   Future<void> sendMessage() async {
     String userMessage = controller.text.trim();
     if (userMessage.isEmpty) return;
@@ -51,16 +57,18 @@ class _MedicineExplainerScreenState extends State<MedicineExplainerScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: const [
-                        Icon(Icons.medication,
-                            size: 60, color: AppColors.primary),
+                        Icon(
+                          Icons.medication,
+                          size: 60,
+                          color: AppColors.primary,
+                        ),
                         SizedBox(height: 15),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 30),
                           child: Text(
                             "Enter medicine names from your prescription to know what they do.",
                             textAlign: TextAlign.center,
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.grey),
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
                           ),
                         ),
                       ],
@@ -108,9 +116,7 @@ class _MedicineExplainerScreenState extends State<MedicineExplainerScreen> {
           IconButton.filled(
             onPressed: isLoading ? null : sendMessage,
             icon: const Icon(Icons.send),
-            style: IconButton.styleFrom(
-              backgroundColor: AppColors.primary,
-            ),
+            style: IconButton.styleFrom(backgroundColor: AppColors.primary),
           ),
         ],
       ),
@@ -121,8 +127,7 @@ class _MedicineExplainerScreenState extends State<MedicineExplainerScreen> {
     bool isUser = msg["role"] == "user";
 
     return Align(
-      alignment:
-          isUser ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.8,
@@ -137,9 +142,7 @@ class _MedicineExplainerScreenState extends State<MedicineExplainerScreen> {
             bottomLeft: Radius.circular(isUser ? 20 : 0),
             bottomRight: Radius.circular(isUser ? 0 : 20),
           ),
-          boxShadow: const [
-            BoxShadow(color: Colors.black12, blurRadius: 4),
-          ],
+          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
         ),
         child: Text(
           msg["text"]!,

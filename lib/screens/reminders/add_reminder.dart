@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/color.dart';
 import '../../models/reminder_model.dart';
-import '../../../widgets/main_layout.dart';
+import '../../core/services/notification_service.dart';
 
 class AddReminderScreen extends StatefulWidget {
   const AddReminderScreen({super.key});
@@ -28,7 +28,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
     }
   }
 
-  void _saveReminder() {
+  void _saveReminder() async {
     if (_medicineController.text.isEmpty ||
         _dosageController.text.isEmpty ||
         selectedTime == null) {
@@ -40,17 +40,31 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
 
     final now = DateTime.now();
 
+    DateTime scheduledDate = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      selectedTime!.hour,
+      selectedTime!.minute,
+    );
+
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
     final reminder = ReminderModel(
       title: _medicineController.text,
-      time: DateTime(
-        now.year,
-        now.month,
-        now.day,
-        selectedTime!.hour,
-        selectedTime!.minute,
-      ),
+      time: scheduledDate,
       dosage: _dosageController.text,
       frequency: selectedFrequency,
+    );
+
+    await NotificationService.scheduleReminder(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: "Medicine Reminder 💊",
+      body:
+          "${reminder.title} - ${reminder.dosage} (${reminder.frequency})",
+      dateTime: scheduledDate,
     );
 
     Navigator.pop(context, reminder);
@@ -59,15 +73,14 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //currentIndex: 1, 
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF6FA3A7),
-              Color(0xFFB8D6D2),
+              Color(0xFF6FA5A8), // top color
+              Color(0xFFE4F1F2), // bottom color
             ],
           ),
         ),
@@ -222,9 +235,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected
-                  ? const Color(0xFFB8F1EC)
-                  : Colors.white,
+              color: isSelected ? const Color(0xFFB8F1EC) : Colors.white,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(

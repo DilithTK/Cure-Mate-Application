@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../core/theme/color.dart';
 
 class PrescriptionCard extends StatelessWidget {
+
   final DocumentSnapshot data;
   final VoidCallback onTap;
 
@@ -15,154 +16,191 @@ class PrescriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final p = data.data() as Map<String, dynamic>;
 
-    final status = p['status'] ?? 'Pending';
+    final p =
+        data.data() as Map<String, dynamic>;
 
-    final isPending = status == "Pending";
+    final patientName =
+        p['patientName'] ?? "Unknown Patient";
+
+    final status =
+        p['status'] ?? "Pending";
+
+    final timestamp = p['createdAt'];
+
+    String formattedDate = "No Date";
+
+    if (timestamp != null &&
+        timestamp is Timestamp) {
+
+      final date = timestamp.toDate();
+
+      formattedDate =
+          "${date.day}/${date.month}/${date.year}";
+    }
+
+    final isPending =
+        status.toString().toLowerCase()
+        == "pending";
 
     return InkWell(
-      borderRadius: BorderRadius.circular(24),
+
       onTap: onTap,
 
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 18),
+      borderRadius:
+          BorderRadius.circular(24),
 
-        padding: const EdgeInsets.all(18),
+      child: Container(
+
+        margin:
+            const EdgeInsets.only(bottom: 18),
+
+        padding:
+            const EdgeInsets.all(18),
 
         decoration: BoxDecoration(
+
           color: Colors.white,
 
-          borderRadius: BorderRadius.circular(24),
+          borderRadius:
+              BorderRadius.circular(24),
 
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.08),
+              color:
+                  Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
         ),
 
-        child: Column(
+        child: Row(
           children: [
 
-            // TOP
-            Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
+            // ===============================
+            // ICON
+            // ===============================
 
-              children: [
+            Container(
 
-                Text(
-                  data.id,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
-                  ),
-                ),
+              padding:
+                  const EdgeInsets.all(14),
 
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 6,
-                  ),
+              decoration: BoxDecoration(
+                color: AppColors.secondary,
 
-                  decoration: BoxDecoration(
-                    color: isPending
-                        ? AppColors.warning
-                            .withOpacity(0.15)
-                        : AppColors.success
-                            .withOpacity(0.15),
+                borderRadius:
+                    BorderRadius.circular(18),
+              ),
 
-                    borderRadius:
-                        BorderRadius.circular(30),
-                  ),
-
-                  child: Text(
-                    status,
-
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-
-                      color: isPending
-                          ? AppColors.warning
-                          : AppColors.success,
-                    ),
-                  ),
-                ),
-              ],
+              child: const Icon(
+                Icons.medical_services,
+                color: AppColors.primary,
+                size: 28,
+              ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(width: 16),
 
-            Row(
-              children: [
+            // ===============================
+            // DETAILS
+            // ===============================
 
-                Container(
-                  padding:
-                      const EdgeInsets.all(12),
+            Expanded(
+              child: Column(
 
-                  decoration: BoxDecoration(
-                    color:
-                        AppColors.secondary,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
 
-                    borderRadius:
-                        BorderRadius.circular(14),
+                children: [
+
+                  Text(
+                    patientName,
+
+                    maxLines: 1,
+
+                    overflow:
+                        TextOverflow.ellipsis,
+
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight:
+                          FontWeight.bold,
+                      color:
+                          AppColors.textDark,
+                    ),
                   ),
 
-                  child: const Icon(
-                    Icons.person_outline,
-                    color: AppColors.primary,
-                  ),
-                ),
+                  const SizedBox(height: 8),
 
-                const SizedBox(width: 14),
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
-
+                  Row(
                     children: [
 
-                      Text(
-                        p['patientName'] ??
-                            'Unknown Patient',
-
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight:
-                              FontWeight.bold,
-                          color:
-                              AppColors.textDark,
-                        ),
+                      const Icon(
+                        Icons.calendar_month,
+                        size: 16,
+                        color:
+                            AppColors.textLight,
                       ),
 
-                      const SizedBox(height: 4),
+                      const SizedBox(width: 6),
 
-                      Text(
-                        p['date'] ?? 'No Date',
+                      Expanded(
+                        child: Text(
+                          formattedDate,
 
-                        style: const TextStyle(
-                          color:
-                              AppColors.textLight,
+                          overflow:
+                              TextOverflow.ellipsis,
+
+                          style: const TextStyle(
+                            color: AppColors
+                                .textMedium,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
+                ],
+              ),
+            ),
 
-                Text(
-                  p['time'] ?? '',
+            const SizedBox(width: 10),
 
-                  style: const TextStyle(
-                    color: AppColors.textLight,
-                  ),
+            // ===============================
+            // STATUS
+            // ===============================
+
+            Container(
+
+              padding:
+                  const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 8,
+              ),
+
+              decoration: BoxDecoration(
+
+                color: isPending
+                    ? AppColors.warningLight
+                    : AppColors.successLight,
+
+                borderRadius:
+                    BorderRadius.circular(30),
+              ),
+
+              child: Text(
+                status,
+
+                style: TextStyle(
+                  fontWeight:
+                      FontWeight.bold,
+
+                  color: isPending
+                      ? AppColors.warning
+                      : AppColors.success,
                 ),
-              ],
+              ),
             ),
           ],
         ),

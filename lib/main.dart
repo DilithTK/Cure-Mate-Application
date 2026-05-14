@@ -1,41 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'firebase_options.dart';
+import 'core/services/notification_service.dart';
+import 'core/navigation/app_navigation.dart';
 import 'core/theme/color.dart';
-
-// Screens
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'screens/splash/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/phamacist/pharmacy_dashboard.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  /// ✅ LOAD ENV FIRST
+  await dotenv.load(fileName: ".env");
+
+  /// 🔥 DEBUG .env
+  print("ENV => ${dotenv.env}");
+  print("KEY => ${dotenv.env['GEMINI_API_KEY']}");
+
+  ///  INIT TIMEZONE (IMPORTANT for reminders)
+  tz.initializeTimeZones();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // App Check (DEBUG for development)
-  if (!kIsWeb) {
-    await FirebaseAppCheck.instance.activate(
-      androidProvider: AndroidProvider.debug,
-      appleProvider: AppleProvider.debug,
-    );
-  }
+  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
 
-  // Load .env safely
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (e) {
-    debugPrint("ENV file missing, skipping...");
-  }
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+  );
+
+  await NotificationService.init();
+
+  NotificationService.onNotificationClick = (prescriptionId) {
+    if (prescriptionId.isNotEmpty) {
+      AppNavigation.openPrescription(prescriptionId);
+    }
+  };
 
   runApp(const CureMateApp());
 }
@@ -48,35 +65,25 @@ class CureMateApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'CureMate',
-
+      navigatorKey: AppNavigation.navigatorKey,
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Poppins',
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primary,
-          primary: AppColors.primary,
         ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
-        scaffoldBackgroundColor: Colors.transparent,
       ),
-
       home: const RootDecider(),
-
       routes: {
-        '/login': (context) => const LoginScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/profile': (context) => const ProfileScreen(),
-        '/pharmacy': (context) => const PharmacyDashboardScreen(),
+        '/login': (_) => const LoginScreen(),
+        '/home': (_) => const HomeScreen(),
+        '/profile': (_) => const ProfileScreen(),
+        '/pharmacy': (_) => const PharmacyDashboardScreen(),
       },
     );
   }
 }
 
-/// 🔥 Single clean auth flow (BEST PRACTICE)
 class RootDecider extends StatelessWidget {
   const RootDecider({super.key});
 
@@ -91,11 +98,7 @@ class RootDecider extends StatelessWidget {
           );
         }
 
-        if (snapshot.hasData) {
-          return const HomeScreen();
-        } else {
-          return const SplashScreen();
-        }
+        return snapshot.hasData ? const HomeScreen() : const SplashScreen();
       },
     );
   }
