@@ -1,3 +1,4 @@
+
 # Cure-Mate-Application
 
 
@@ -46,7 +47,11 @@ Developed by **Dilith Karunarathne** as a university project.
 
 ## ▶️ How to Run Project
 ```bash
-git clone https://github.com/DilithTK/Cure-Mate-Application.git
+git clone  https://github.com/DilithTK/CureMate-APP.git
 cd cure_mate
 flutter pub get
 flutter run
+
+# CureMate-APP
+Mobile-based healthcare app connecting patients with nearby pharmacies for prescription uploads and real-time responses.
+
