@@ -1,33 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-<<<<<<< HEAD
-=======
-
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
 import 'firestore_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirestoreService _firestore = FirestoreService.instance;
 
-<<<<<<< HEAD
-  
-  // EMAIL VALIDATION 
-  
+  // EMAIL VALIDATION
   bool _isValidEmail(String email) {
     email = email.trim().toLowerCase();
-
     return RegExp(
       r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
     ).hasMatch(email);
   }
 
- 
   // USER SIGNUP
- 
-=======
-  // 🔹 USER SIGN UP
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<String?> signUp(
     String name,
     String email,
@@ -36,7 +23,6 @@ class AuthService {
     String location,
   ) async {
     try {
-<<<<<<< HEAD
       email = email.trim().toLowerCase();
       password = password.trim();
 
@@ -62,20 +48,6 @@ class AuthService {
         "email": email,
         "mobile": mobile.trim(),
         "location": location.trim(),
-=======
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
-
-      String uid = userCredential.user!.uid;
-
-      // 🔥 Save normal user
-      await FirebaseFirestore.instance.collection("users").doc(uid).set({
-        "uid": uid,
-        "name": name,
-        "email": email,
-        "mobile": mobile,
-        "location": location,
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
         "createdAt": FieldValue.serverTimestamp(),
       });
 
@@ -87,13 +59,7 @@ class AuthService {
     }
   }
 
-<<<<<<< HEAD
- 
-  // PHARMACY SIGNUP
-  
-=======
-  // 🔥 PHARMACY SIGN UP
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
+  // PHARMACY SIGN UP
   Future<String?> pharmacySignUp(
     String name,
     String registrationNo,
@@ -103,7 +69,6 @@ class AuthService {
     String location,
   ) async {
     try {
-<<<<<<< HEAD
       email = email.trim().toLowerCase();
       password = password.trim();
 
@@ -132,27 +97,6 @@ class AuthService {
         location: location.trim(),
       );
 
-=======
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
-
-      String uid = userCredential.user!.uid;
-
-      // 🔥 Save pharmacy to Firestore
-      await _firestore.addPharmacyWithId(
-        uid: uid,
-        name: name,
-        registrationNo: registrationNo,
-        email: email,
-        mobile: mobile,
-        location: location,
-      );
-
-      //await FirebaseFirestore.instance.collection("pharmacies").doc(uid).update(
-       // {"registrationNo": registrationNo},
-      //);
-
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
       return null;
     } on FirebaseAuthException catch (e) {
       return e.message ?? "Signup failed";
@@ -161,10 +105,7 @@ class AuthService {
     }
   }
 
-<<<<<<< HEAD
-  
   // LOGIN
-  
   Future<String?> login(String email, String password) async {
     try {
       email = email.trim().toLowerCase();
@@ -178,12 +119,6 @@ class AuthService {
         email: email,
         password: password,
       );
-=======
-  // 🔹 LOGIN
-  Future<String?> login(String email, String password) async {
-    try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
 
       return null;
     } on FirebaseAuthException catch (e) {
@@ -193,25 +128,11 @@ class AuthService {
     }
   }
 
-<<<<<<< HEAD
-  
   // LOGOUT
-
-=======
-  // 🔹 LOGOUT
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> logout() async {
     await _auth.signOut();
   }
 
-<<<<<<< HEAD
-  
   // CURRENT USER
-  
   User? get currentUser => _auth.currentUser;
 }
-=======
-  // 🔹 GET CURRENT USER
-  User? get currentUser => _auth.currentUser;
-}
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0

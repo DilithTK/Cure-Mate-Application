@@ -2,40 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
 
 class FirestoreService {
-<<<<<<< HEAD
-  
-=======
-  // ===================================================
-  // SINGLETON
-  // ===================================================
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
-
   FirestoreService._();
   static final FirestoreService instance = FirestoreService._();
-
-<<<<<<< HEAD
-  
-  // FIREBASE INSTANCES
-  
-=======
-  // ===================================================
-  // FIREBASE INSTANCES
-  // ===================================================
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final GeoFlutterFire geo = GeoFlutterFire();
 
-<<<<<<< HEAD
-  
-  // ADD NORMAL USER
-  
-=======
-  // ===================================================
-  // ADD NORMAL USER
-  // ===================================================
 
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> addUserWithId(
     String uid,
     String name,
@@ -49,25 +22,12 @@ class FirestoreService {
       'email': email,
       'mobile': mobile,
       'location': location,
-<<<<<<< HEAD
-      
-=======
       'role': 'user',
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
       'createdAt': Timestamp.now(),
     });
   }
 
-<<<<<<< HEAD
-  
-  // ADD PHARMACY
-  
-=======
-  // ===================================================
-  // ADD PHARMACY
-  // ===================================================
 
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> addPharmacyWithId({
     required String uid,
     required String name,
@@ -107,16 +67,7 @@ class FirestoreService {
     }
   }
 
-<<<<<<< HEAD
-  
-  // GET USERS
-  
-=======
-  // ===================================================
-  // GET USERS
-  // ===================================================
 
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Stream<QuerySnapshot> getUsers() {
     return _db.collection('users').snapshots();
   }
@@ -125,16 +76,7 @@ class FirestoreService {
     return await _db.collection('users').doc(uid).get();
   }
 
-<<<<<<< HEAD
-  
-  // UPDATE USER
-  
-=======
-  // ===================================================
-  // UPDATE USER
-  // ===================================================
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
-
+ 
   Future<void> updateUser(
     String uid,
     Map<String, dynamic> data,
@@ -142,15 +84,6 @@ class FirestoreService {
     await _db.collection('users').doc(uid).update(data);
   }
 
-<<<<<<< HEAD
-  
-  // NEARBY PHARMACIES
-  
-=======
-  // ===================================================
-  // NEARBY PHARMACIES
-  // ===================================================
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
 
   Stream<List<DocumentSnapshot>> getNearbyPharmacies({
     required double lat,

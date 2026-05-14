@@ -160,16 +160,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
             CustomButton(
               isLoading ? "Loading..." : "Sign Up",
-<<<<<<< HEAD
+
               color: const Color(0xFF5D8D90),
-=======
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
+
               onPressed: (agreeTerms && !isLoading) ? signUpUser : null,
             ),
 
             const SizedBox(height: 20),
 
-<<<<<<< HEAD
+
             Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -189,7 +188,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 ),
-=======
+
             Center(
               child: GestureDetector(
                 onTap: () {
@@ -209,7 +208,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
             ),
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
+
 
             const SizedBox(height: 30),
 

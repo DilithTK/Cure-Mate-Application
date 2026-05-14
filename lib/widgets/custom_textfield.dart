@@ -50,21 +50,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
         contentPadding:
             const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
 
-<<<<<<< HEAD
-      
-=======
-        // border
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
 
-<<<<<<< HEAD
-       
-=======
-        // focused border
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(
@@ -73,11 +63,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
         ),
 
-<<<<<<< HEAD
-        
-=======
-        // 🔥 PASSWORD TOGGLE ICON
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(

@@ -18,11 +18,7 @@ class _MapScreenState extends State<MapScreen> {
 
   final Set<Marker> _markers = {};
 
-<<<<<<< HEAD
-  
-=======
-  // 🔑 Replace with your real API key
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
+  // 🔑 Replace with real Google Places API key
   final String apiKey = "API key 4";
 
   bool isLoading = true;
@@ -33,45 +29,28 @@ class _MapScreenState extends State<MapScreen> {
     _initializeMap();
   }
 
-<<<<<<< HEAD
-
-=======
-  // 🚀 Initialize
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> _initializeMap() async {
     await _getCurrentLocation();
-    await _fetchNearbyPharmaciesSmart();
+
+    if (_currentPosition != null) {
+      await _fetchNearbyPharmaciesSmart();
+    }
 
     setState(() {
       isLoading = false;
     });
   }
 
-<<<<<<< HEAD
-  
-=======
-  // 📍 Get current location
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
 
-<<<<<<< HEAD
-    
-=======
-    // Location ON check
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     if (!serviceEnabled) {
       throw Exception("Location services are disabled.");
     }
 
-<<<<<<< HEAD
-    
-=======
-    // Permission check
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
     permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
@@ -92,12 +71,9 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-<<<<<<< HEAD
-  
-=======
-  // 🏥 Smart radius search
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
   Future<void> _fetchNearbyPharmaciesSmart() async {
+    if (_currentPosition == null) return;
+
     List<int> radiusList = [500, 1000, 3000];
 
     for (int radius in radiusList) {
@@ -109,29 +85,16 @@ class _MapScreenState extends State<MapScreen> {
           "&key=$apiKey";
 
       final response = await http.get(Uri.parse(url));
-
       final data = json.decode(response.body);
 
-      if (data["results"] != null &&
-          data["results"].length > 0) {
-
+      if (data["results"] != null && data["results"].isNotEmpty) {
         _markers.clear();
 
         for (var place in data["results"]) {
+          final double lat = place["geometry"]["location"]["lat"];
+          final double lng = place["geometry"]["location"]["lng"];
 
-          final double lat =
-              place["geometry"]["location"]["lat"];
-
-          final double lng =
-              place["geometry"]["location"]["lng"];
-
-<<<<<<< HEAD
-          
-=======
-          // 📏 Distance calculate
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
-          double distance =
-              Geolocator.distanceBetween(
+          double distance = Geolocator.distanceBetween(
             _currentPosition!.latitude,
             _currentPosition!.longitude,
             lat,
@@ -140,15 +103,12 @@ class _MapScreenState extends State<MapScreen> {
 
           final marker = Marker(
             markerId: MarkerId(place["place_id"]),
-
             position: LatLng(lat, lng),
-
             infoWindow: InfoWindow(
               title: place["name"],
               snippet:
-                  "${place["vicinity"]}\n${distance.toStringAsFixed(0)}m away",
+                  "${place["vicinity"]}\n${distance.toStringAsFixed(0)} m away",
             ),
-
             icon: BitmapDescriptor.defaultMarkerWithHue(
               BitmapDescriptor.hueRed,
             ),
@@ -158,18 +118,12 @@ class _MapScreenState extends State<MapScreen> {
         }
 
         setState(() {});
-
-        print("Found pharmacies within ${radius}m");
-
         return;
       }
     }
 
-<<<<<<< HEAD
-   
-=======
-    // ❌ No pharmacies found
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("No pharmacies found nearby"),
@@ -179,13 +133,9 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    // ⏳ Loading
     if (isLoading || _currentPosition == null) {
       return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -193,19 +143,14 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         title: const Text("Nearby Pharmacies"),
       ),
-
       body: GoogleMap(
-
         initialCameraPosition: CameraPosition(
           target: _currentPosition!,
           zoom: 15,
         ),
-
         markers: _markers,
-
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
-
         onMapCreated: (controller) {
           mapController = controller;
         },

@@ -4,11 +4,7 @@ import '../core/theme/color.dart';
 class DashboardCard extends StatelessWidget {
   final IconData icon;
   final String title;
-<<<<<<< HEAD
-  final VoidCallback? onTap; 
-=======
-  final VoidCallback? onTap; // optional tap callback
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
+  final VoidCallback? onTap;
 
   const DashboardCard({
     super.key,
@@ -20,17 +16,10 @@ class DashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-<<<<<<< HEAD
-      onTap: onTap, 
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.white.withOpacity(0.25), 
-=======
-      onTap: onTap, // safely handle taps if provided
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.white.withOpacity(0.25), // semi-transparent white
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
+          color: AppColors.white.withOpacity(0.25),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -55,11 +44,7 @@ class DashboardCard extends StatelessWidget {
               child: Icon(
                 icon,
                 size: 28,
-<<<<<<< HEAD
-                color: AppColors.primary, 
-=======
-                color: AppColors.primary, // use your brand color
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
+                color: AppColors.primary,
               ),
             ),
             const SizedBox(height: 12),
@@ -69,11 +54,7 @@ class DashboardCard extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-<<<<<<< HEAD
-                color: Colors.white, 
-=======
-                color: Colors.white, // matches your gradient/modern UI
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
+                color: Colors.white,
               ),
             ),
           ],

@@ -4,7 +4,6 @@
 *.pyc
 *.swp
 .DS_Store
-<<<<<<< HEAD
 
 # IDE
 .idea/
@@ -39,7 +38,7 @@ coverage/
 
 # ENV (IMPORTANT)
 .env
-=======
+
 .atom/
 .build/
 .buildlog/
@@ -79,4 +78,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
->>>>>>> f4fc04c1468aff1b3df4e77ae03e18fc2e8503f0
+
