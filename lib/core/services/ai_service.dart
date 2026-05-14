@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AIService {
   
-  static String get apiKey => dotenv.env['AIzaSyA61lRiY7gaRCWs9kR6YJXYCgFXw4KMy48'] ?? '';
+  static String get apiKey => dotenv.env[''] ?? '';
 
   static const String url =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
