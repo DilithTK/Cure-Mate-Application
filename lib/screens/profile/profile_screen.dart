@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/services/firestore_service.dart';
 import '../../core/services/firebase_auth_service.dart';
 import 'edit_profile_screen.dart';
-import '../auth/login_screen.dart';
+import '../splash/role_selection_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -191,7 +191,7 @@ class ProfileScreen extends StatelessWidget {
 
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
           (route) => false,
         );
       },

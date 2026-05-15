@@ -12,7 +12,6 @@ class ForgotPasswordScreen extends StatefulWidget {
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
-
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController emailController = TextEditingController();
   bool isLoading = false;

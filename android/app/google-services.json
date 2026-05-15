@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "508605399608",
+    "project_id": "curemate-application",
+    "storage_bucket": "curemate-application.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508605399608:android:dfbd0c0b0d1f5e3d4d9ccd",
+        "android_client_info": {
+          "package_name": "com.example.curemate_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMS23FMdAamSwpy3s6C61-N6qNVOZAduQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

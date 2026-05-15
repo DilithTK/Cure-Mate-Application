@@ -15,6 +15,10 @@ class LocationService {
       permission = await Geolocator.requestPermission();
     }
 
+    if (permission == LocationPermission.denied) {
+      throw Exception('Location permission denied');
+    }
+
     if (permission == LocationPermission.deniedForever) {
       throw Exception('Location permission permanently denied');
     }

@@ -167,9 +167,9 @@ class UserResponseScreen extends StatelessWidget {
   }
 }
 
-//////////////////////////////////////////////////////
+
 // DETAILS SCREEN
-//////////////////////////////////////////////////////
+
 
 class ResponseDetailsScreen extends StatelessWidget {
   final String imageUrl;

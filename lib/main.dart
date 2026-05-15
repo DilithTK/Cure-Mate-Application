@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
 
 import 'firebase_options.dart';
 import 'core/services/notification_service.dart';
 import 'core/navigation/app_navigation.dart';
 import 'core/theme/color.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
+
 import 'screens/splash/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/phamacist/pharmacy_dashboard.dart';
 
+/// 🔥 Background handler (must be top-level)
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(
@@ -26,30 +27,34 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  
+  /// 🔥 1. LOAD .env FIRST (IMPORTANT)
   await dotenv.load(fileName: ".env");
 
-  
+  /// 🧪 DEBUG (REMOVE LATER if you want)
+  print("🔥 ENV KEY => ${dotenv.env['GEMINI_API_KEY']}");
+
+  /// 🌍 2. TIMEZONE INIT
   tz.initializeTimeZones();
 
+  /// 🔥 3. FIREBASE INIT
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  /// 🔔 4. BACKGROUND MESSAGE HANDLER
   FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
 
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.debug,
-  );
-
+  /// 🔔 5. NOTIFICATION CLICK HANDLER
   NotificationService.onNotificationClick = (prescriptionId) {
     if (prescriptionId.isNotEmpty) {
       AppNavigation.openPrescription(prescriptionId);
     }
   };
 
+  /// 🚀 RUN APP FIRST (important order fix)
   runApp(const CureMateApp());
 
+  /// 🔔 6. INIT NOTIFICATIONS AFTER APP START
   NotificationService.init().catchError((error) {
     debugPrint("Notification init failed: $error");
   });
@@ -63,7 +68,9 @@ class CureMateApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'CureMate',
+
       navigatorKey: AppNavigation.navigatorKey,
+
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Poppins',
@@ -71,7 +78,9 @@ class CureMateApp extends StatelessWidget {
           seedColor: AppColors.primary,
         ),
       ),
+
       home: const RootDecider(),
+
       routes: {
         '/login': (_) => const LoginScreen(),
         '/home': (_) => const HomeScreen(),
@@ -96,7 +105,9 @@ class RootDecider extends StatelessWidget {
           );
         }
 
-        return snapshot.hasData ? const HomeScreen() : const SplashScreen();
+        return snapshot.hasData
+            ? const HomeScreen()
+            : const SplashScreen();
       },
     );
   }

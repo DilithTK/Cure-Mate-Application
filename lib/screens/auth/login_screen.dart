@@ -3,7 +3,7 @@ import '../home/home_screen.dart';
 import '../../core/theme/color.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/custom_button.dart';
-import '../../widgets/social_row.dart';
+
 import '../../core/services/firebase_auth_service.dart';
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 30),
 
 
-            const SocialRow(),
+            
           ],
         ),
       ),

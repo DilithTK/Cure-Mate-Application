@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/color.dart';
 import '../../widgets/custom_textfield.dart';
 import '../../widgets/custom_button.dart';
-import '../../widgets/social_row.dart';
 import '../../core/services/firebase_auth_service.dart';
-import 'login_screen.dart';
+import '../home/home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -22,7 +21,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController locationController = TextEditingController();
 
   final AuthService _authService = AuthService();
@@ -55,9 +55,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         const SnackBar(content: Text("Signup Successful")),
       );
 
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -162,59 +163,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
             CustomButton(
               isLoading ? "Loading..." : "Sign Up",
-
               color: const Color(0xFF5D8D90),
-
               onPressed: (agreeTerms && !isLoading) ? signUpUser : null,
             ),
 
             const SizedBox(height: 20),
 
-
             Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Already have an account? ",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Already have an account? ",
+                  style: TextStyle(color: Colors.white),
                 ),
-
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const LoginScreen(),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: const Text(
+                    "Login",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
-                  );
-                },
-                child: const Text(
-                  "Already have an account? Log In",
-                  style: TextStyle(
-                    color: Colors.white70,
-                    decoration: TextDecoration.underline,
                   ),
                 ),
-              ),
+              ],
             ),
-
 
             const SizedBox(height: 30),
 
-            const SocialRow(),
+            
           ],
         ),
       ),

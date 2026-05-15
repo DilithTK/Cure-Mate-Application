@@ -43,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
     PharmacyListScreen(),
     ProfileScreen(),
   ];
-
   @override
   void initState() {
     super.initState();
@@ -138,27 +137,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const Divider(),
 
-              _menuItem(Icons.login, "Login", () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const LoginScreen(),
-                  ),
-                );
-              }),
-
-              _menuItem(Icons.app_registration, "Register", () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const SignUpScreen(),
-                  ),
-                );
-              }),
-
-              const Divider(),
+              if (FirebaseAuth.instance.currentUser == null) ...[
+                _menuItem(Icons.login, "Login", () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const LoginScreen(),
+                    ),
+                  );
+                }),
+                _menuItem(Icons.app_registration, "Register", () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SignUpScreen(),
+                    ),
+                  );
+                }),
+                const Divider(),
+              ],
 
               _menuItem(Icons.logout, "Logout", () async {
                 Navigator.pop(context);
