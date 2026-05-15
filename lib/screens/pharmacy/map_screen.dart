@@ -1,8 +1,7 @@
-import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -12,16 +11,14 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  static const LatLng _defaultCenter = LatLng(6.9271, 79.8612);
+
   GoogleMapController? mapController;
-
-  LatLng? _currentPosition;
-
+  LatLng _currentPosition = _defaultCenter;
+  bool hasUserLocation = false;
   final Set<Marker> _markers = {};
-
-  // 🔑 Replace with real Google Places API key
-  final String apiKey = "API key 4";
-
   bool isLoading = true;
+  String? message;
 
   @override
   void initState() {
@@ -30,110 +27,136 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _initializeMap() async {
-    await _getCurrentLocation();
-
-    if (_currentPosition != null) {
-      await _fetchNearbyPharmaciesSmart();
+    try {
+      await _getCurrentLocation();
+      await _loadRegisteredPharmacies();
+    } catch (e) {
+      debugPrint("Map error: $e");
+      await _loadRegisteredPharmacies(
+        "Could not get your current location. Showing registered pharmacies only.",
+      );
     }
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     if (!serviceEnabled) {
-      throw Exception("Location services are disabled.");
+      throw Exception("Location services disabled.");
     }
 
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      throw Exception("Location permission permanently denied.");
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      throw Exception("Location permission denied.");
     }
 
-    Position position = await Geolocator.getCurrentPosition(
+    final position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
+      timeLimit: const Duration(seconds: 10),
     );
 
     _currentPosition = LatLng(
       position.latitude,
       position.longitude,
     );
+    hasUserLocation = true;
   }
 
-  Future<void> _fetchNearbyPharmaciesSmart() async {
-    if (_currentPosition == null) return;
+  Future<void> _loadRegisteredPharmacies([String? fallbackMessage]) async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('pharmacies').get();
 
-    List<int> radiusList = [500, 1000, 3000];
+    _markers.clear();
 
-    for (int radius in radiusList) {
-      final url =
-          "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
-          "?location=${_currentPosition!.latitude},${_currentPosition!.longitude}"
-          "&radius=$radius"
-          "&type=pharmacy"
-          "&key=$apiKey";
+    for (final doc in snapshot.docs) {
+      final data = doc.data();
+      final pharmacyLocation = _readPharmacyLocation(data);
 
-      final response = await http.get(Uri.parse(url));
-      final data = json.decode(response.body);
-
-      if (data["results"] != null && data["results"].isNotEmpty) {
-        _markers.clear();
-
-        for (var place in data["results"]) {
-          final double lat = place["geometry"]["location"]["lat"];
-          final double lng = place["geometry"]["location"]["lng"];
-
-          double distance = Geolocator.distanceBetween(
-            _currentPosition!.latitude,
-            _currentPosition!.longitude,
-            lat,
-            lng,
-          );
-
-          final marker = Marker(
-            markerId: MarkerId(place["place_id"]),
-            position: LatLng(lat, lng),
-            infoWindow: InfoWindow(
-              title: place["name"],
-              snippet:
-                  "${place["vicinity"]}\n${distance.toStringAsFixed(0)} m away",
-            ),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueRed,
-            ),
-          );
-
-          _markers.add(marker);
-        }
-
-        setState(() {});
-        return;
+      if (pharmacyLocation == null) {
+        continue;
       }
+
+      final distance = Geolocator.distanceBetween(
+        _currentPosition.latitude,
+        _currentPosition.longitude,
+        pharmacyLocation.latitude,
+        pharmacyLocation.longitude,
+      );
+
+      if (!hasUserLocation || distance <= 5000) {
+        _markers.add(
+          Marker(
+            markerId: MarkerId(doc.id),
+            position: pharmacyLocation,
+            infoWindow: InfoWindow(
+              title: data['name']?.toString() ?? 'Pharmacy',
+              snippet: hasUserLocation
+                  ? "${distance.toStringAsFixed(0)} m away"
+                  : null,
+            ),
+          ),
+        );
+      }
+    }
+
+    if (hasUserLocation) {
+      _markers.add(
+        Marker(
+          markerId: const MarkerId("me"),
+          position: _currentPosition,
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueBlue,
+          ),
+          infoWindow: const InfoWindow(title: "You are here"),
+        ),
+      );
     }
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("No pharmacies found nearby"),
-      ),
-    );
+    setState(() {
+      isLoading = false;
+      message = fallbackMessage ??
+          (_markers.isEmpty || (hasUserLocation && _markers.length == 1)
+              ? "No registered pharmacies found within 5 km."
+              : null);
+    });
+  }
+
+  LatLng? _readPharmacyLocation(Map<String, dynamic> data) {
+    final position = data['position'];
+    if (position is GeoPoint) {
+      return LatLng(position.latitude, position.longitude);
+    }
+
+    final latitude = data['latitude'];
+    final longitude = data['longitude'];
+    if (latitude is num && longitude is num) {
+      return LatLng(latitude.toDouble(), longitude.toDouble());
+    }
+
+    final location = data['location'];
+    if (location is Map) {
+      final lat = location['lat'];
+      final lng = location['lng'];
+
+      if (lat is num && lng is num) {
+        return LatLng(lat.toDouble(), lng.toDouble());
+      }
+    }
+
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading || _currentPosition == null) {
+    if (isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
@@ -145,16 +168,31 @@ class _MapScreenState extends State<MapScreen> {
       ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
-          target: _currentPosition!,
+          target: _currentPosition,
           zoom: 15,
         ),
         markers: _markers,
-        myLocationEnabled: true,
+        myLocationEnabled: hasUserLocation,
         myLocationButtonEnabled: true,
         onMapCreated: (controller) {
           mapController = controller;
+          mapController?.animateCamera(
+            CameraUpdate.newLatLngZoom(_currentPosition, 15),
+          );
         },
       ),
+      bottomNavigationBar: message == null
+          ? null
+          : SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  message!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
     );
   }
 }

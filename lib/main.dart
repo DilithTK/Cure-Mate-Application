@@ -26,14 +26,10 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  /// ✅ LOAD ENV FIRST
+  
   await dotenv.load(fileName: ".env");
 
-  /// 🔥 DEBUG .env
-  print("ENV => ${dotenv.env}");
-  print("KEY => ${dotenv.env['GEMINI_API_KEY']}");
-
-  ///  INIT TIMEZONE (IMPORTANT for reminders)
+  
   tz.initializeTimeZones();
 
   await Firebase.initializeApp(
@@ -46,8 +42,6 @@ void main() async {
     androidProvider: AndroidProvider.debug,
   );
 
-  await NotificationService.init();
-
   NotificationService.onNotificationClick = (prescriptionId) {
     if (prescriptionId.isNotEmpty) {
       AppNavigation.openPrescription(prescriptionId);
@@ -55,6 +49,10 @@ void main() async {
   };
 
   runApp(const CureMateApp());
+
+  NotificationService.init().catchError((error) {
+    debugPrint("Notification init failed: $error");
+  });
 }
 
 class CureMateApp extends StatelessWidget {

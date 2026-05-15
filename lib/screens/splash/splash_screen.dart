@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../core/theme/color.dart';
 import '../../widgets/app_background.dart';
 import '../../screens/home/home_screen.dart';
-import '../../screens/auth/login_screen.dart';
 import '../../screens/splash/role_selection_screen.dart';
 
 class SplashScreen extends StatefulWidget {

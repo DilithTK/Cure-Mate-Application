@@ -46,6 +46,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       locationController.text.trim(),
     );
 
+    if (!mounted) return;
+
     setState(() => isLoading = false);
 
     if (result == null) {

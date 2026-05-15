@@ -19,17 +19,17 @@ class DashboardCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.white.withOpacity(0.25),
+          color: AppColors.white.withValues(alpha: 0.25),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
           ],
           border: Border.all(
-            color: AppColors.white.withOpacity(0.3),
+            color: AppColors.white.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -38,7 +38,7 @@ class DashboardCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: AppColors.white.withOpacity(0.35),
+                color: AppColors.white.withValues(alpha: 0.35),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(

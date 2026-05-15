@@ -45,31 +45,23 @@ class _ResponseScreenState extends State<ResponseScreen> {
 
   Widget availabilityRadio(int index) {
     final value = medicinesStatus[index] ?? "Unavailable";
-    return Row(
+    return Wrap(
+      spacing: 8,
       children: [
-        Radio<String>(
-          value: "Available",
-          groupValue: value,
-          onChanged: (val) {
-            setState(() {
-              medicinesStatus[index] = val!;
-            });
-          },
+        ChoiceChip(
+          label: const Text("Available"),
+          selected: value == "Available",
+          onSelected: (_) => setState(() {
+            medicinesStatus[index] = "Available";
+          }),
         ),
-        const Text("Available"),
-
-        const SizedBox(width: 20),
-
-        Radio<String>(
-          value: "Unavailable",
-          groupValue: value,
-          onChanged: (val) {
-            setState(() {
-              medicinesStatus[index] = val!;
-            });
-          },
+        ChoiceChip(
+          label: const Text("Unavailable"),
+          selected: value == "Unavailable",
+          onSelected: (_) => setState(() {
+            medicinesStatus[index] = "Unavailable";
+          }),
         ),
-        const Text("Unavailable"),
       ],
     );
   }
@@ -106,8 +98,7 @@ class _ResponseScreenState extends State<ResponseScreen> {
   @override
   Widget build(BuildContext context) {
     final p = widget.prescription.data() as Map<String, dynamic>;
-    final medicines = (p['medicines']as List?) ?? [];
-    print("Medicines: $medicines"); 
+    final medicines = (p['medicines'] as List?) ?? [];
 
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
@@ -226,6 +217,8 @@ class _ResponseScreenState extends State<ResponseScreen> {
                       'updatedAt': FieldValue.serverTimestamp(),
                     },
                   });
+
+                  if (!context.mounted) return;
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Response Sent")),

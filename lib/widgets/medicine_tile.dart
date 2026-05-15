@@ -41,7 +41,6 @@ class _MedicineTileState extends State<MedicineTile> {
             children: [
               const Icon(Icons.medication_rounded, color: AppColors.primary),
               const SizedBox(width: 12),
-
               Expanded(
                 child: Text(
                   "${widget.medicine.name} ${widget.medicine.dosage ?? ''}",
@@ -50,9 +49,7 @@ class _MedicineTileState extends State<MedicineTile> {
               ),
             ],
           ),
-
           const SizedBox(height: 12),
-
           Text(
             selected == "available"
                 ? "Medicine Available"
@@ -63,38 +60,31 @@ class _MedicineTileState extends State<MedicineTile> {
                   : AppColors.danger,
             ),
           ),
-
           const SizedBox(height: 10),
-
-          Row(
+          Wrap(
+            spacing: 8,
             children: [
-              Radio<String>(
-                value: "available",
-                groupValue: selected,
-                onChanged: (value) {
-                  setState(() {
-                    selected = value!;
-                    widget.medicine.status = value; // ✅ WORKS NOW
-                  });
-                },
+              ChoiceChip(
+                label: const Text("Available"),
+                selected: selected == "available",
+                onSelected: (_) => _setStatus("available"),
               ),
-              const Text("Available"),
-
-              Radio<String>(
-                value: "unavailable",
-                groupValue: selected,
-                onChanged: (value) {
-                  setState(() {
-                    selected = value!;
-                    widget.medicine.status = value; // ✅ WORKS NOW
-                  });
-                },
+              ChoiceChip(
+                label: const Text("Unavailable"),
+                selected: selected == "unavailable",
+                onSelected: (_) => _setStatus("unavailable"),
               ),
-              const Text("Unavailable"),
             ],
           ),
         ],
       ),
     );
+  }
+
+  void _setStatus(String value) {
+    setState(() {
+      selected = value;
+      widget.medicine.status = value;
+    });
   }
 }

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/theme/color.dart';
-import '../../widgets/custom_textfield.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/custom_textfield.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -31,20 +31,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() => isLoading = true);
 
     try {
-      String email = emailController.text.trim();
+      final email = emailController.text.trim();
 
-
-      //  Send reset email 
       await _auth.sendPasswordResetEmail(email: email);
 
-      
-
-      // 🔥 1. Send reset email (MAIN METHOD)
-      await _auth.sendPasswordResetEmail(email: email);
-
-      // 🔥 2. OPTIONAL: update Firestore user status (NOT password)
-
-      QuerySnapshot userDoc = await _firestore
+      final userDoc = await _firestore
           .collection("users")
           .where("email", isEqualTo: email)
           .get();
@@ -56,16 +47,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         });
       }
 
+      if (!mounted) return;
+
       setState(() => isLoading = false);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Password reset link sent to email"),
-        ),
+        const SnackBar(content: Text("Password reset link sent to email")),
       );
 
       Navigator.pop(context);
     } catch (e) {
+      if (!mounted) return;
+
       setState(() => isLoading = false);
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -91,7 +84,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: ListView(
           children: [
             const SizedBox(height: 80),
-
             const Center(
               child: Text(
                 "FORGOT PASSWORD",
@@ -102,24 +94,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 40),
-
             CustomTextField(
               "Enter your email",
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
             ),
-
             const SizedBox(height: 25),
-
             CustomButton(
               isLoading ? "Sending..." : "Send Reset Link",
               onPressed: isLoading ? null : resetPassword,
             ),
-
             const SizedBox(height: 20),
-
             const Text(
               "Check your email inbox for reset link",
               textAlign: TextAlign.center,

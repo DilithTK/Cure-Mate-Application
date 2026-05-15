@@ -19,6 +19,8 @@ class _ReminderListScreenState extends State<ReminderListScreen> {
       MaterialPageRoute(builder: (_) => const AddReminderScreen()),
     );
 
+    if (!mounted) return;
+
     if (result != null) {
       setState(() => reminders.add(result));
     }
@@ -96,7 +98,7 @@ class _ReminderListScreenState extends State<ReminderListScreen> {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.25),
+        color: Colors.white.withValues(alpha: 0.25),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -123,7 +125,7 @@ class _ReminderListScreenState extends State<ReminderListScreen> {
           ),
           Switch(
             value: true,
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
             onChanged: (_) {},
           ),
         ],

@@ -187,6 +187,8 @@ class ProfileScreen extends StatelessWidget {
       onTap: () async {
         await authService.logout();
 
+        if (!context.mounted) return;
+
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => const LoginScreen()),

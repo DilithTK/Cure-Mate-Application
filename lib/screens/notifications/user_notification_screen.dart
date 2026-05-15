@@ -12,38 +12,54 @@ class UserNotificationScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text("Notifications")),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('notifications')
-            .where('type', isEqualTo: 'user')
-            .where('targetId', isEqualTo: uid)
-            .orderBy('createdAt', descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: uid == null
+          ? const Center(child: Text("Please sign in to view notifications"))
+          : StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              stream: FirebaseFirestore.instance
+                  .collection('notifications')
+                  .where('type', isEqualTo: 'user')
+                  .where('targetId', isEqualTo: uid)
+                  .orderBy('createdAt', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text("Failed to load notifications"),
+                  );
+                }
 
-          final docs = snapshot.data!.docs;
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-          if (docs.isEmpty) {
-            return const Center(child: Text("No notifications"));
-          }
+                final docs = snapshot.data!.docs;
 
-          return ListView.builder(
-            itemCount: docs.length,
-            itemBuilder: (context, index) {
-              final data = docs[index];
+                if (docs.isEmpty) {
+                  return const Center(child: Text("No notifications"));
+                }
 
-              return ListTile(
-                leading: const Icon(Icons.notifications, color: Colors.blue),
-                title: Text(data['title'] ?? ""),
-                subtitle: Text(data['message'] ?? ""),
-              );
-            },
-          );
-        },
-      ),
+                return ListView.builder(
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    final doc = docs[index];
+                    final data = doc.data();
+                    final isRead = data['isRead'] == true;
+
+                    return ListTile(
+                      leading: Icon(
+                        isRead
+                            ? Icons.notifications_none
+                            : Icons.notifications_active,
+                        color: isRead ? Colors.grey : Colors.blue,
+                      ),
+                      title: Text(data['title'] ?? ""),
+                      subtitle: Text(data['message'] ?? ""),
+                      onTap: () => NotificationService.markAsRead(doc.id),
+                    );
+                  },
+                );
+              },
+            ),
     );
   }
 }

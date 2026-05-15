@@ -38,7 +38,7 @@ class PrescriptionModel {
           data['imageUrl'] ?? '',
 
       status:
-          data['status'] ?? 'Pending',
+          data['status']?.toString() ?? 'Pending',
 
       medicines:
           (data['medicines']

@@ -8,6 +8,7 @@ import '../screens/prescriptions/find_pharmacies_screen.dart';
 import '../screens/pharmacy/pharmacy_list_screen.dart';
 import '../screens/pharmacy/map_screen.dart';
 import '../screens/profile/profile_screen.dart';
+import '../screens/notifications/user_notification_screen.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -41,10 +42,17 @@ class _MainLayoutState extends State<MainLayout> {
       appBar: CustomAppBar(
         title: _titles[_currentIndex],
         onBellTap: () {
-          // TODO: Navigate to notifications
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const UserNotificationScreen(),
+            ),
+          );
         },
         onMenuTap: () {
-          // TODO: Open drawer / menu
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Menu is not available yet")),
+          );
         },
       ),
       body: IndexedStack(

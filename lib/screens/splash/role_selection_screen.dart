@@ -25,7 +25,7 @@ class RoleSelectionScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white24),
                     ),
@@ -138,12 +138,12 @@ class _RoleCardState extends State<_RoleCard> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.12),
+            color: Colors.white.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(22),
             border: Border.all(color: Colors.white24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.25),
+                color: Colors.black.withValues(alpha: 0.25),
                 blurRadius: 15,
                 offset: const Offset(0, 8),
               )
@@ -154,7 +154,7 @@ class _RoleCardState extends State<_RoleCard> {
             children: [
               CircleAvatar(
                 radius: 28,
-                backgroundColor: widget.color.withOpacity(0.2),
+                backgroundColor: widget.color.withValues(alpha: 0.2),
                 child: Icon(
                   widget.icon,
                   color: widget.color,

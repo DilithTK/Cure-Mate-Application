@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../auth/ForgotPasswordScreen.dart';
+import '../../auth/forgot_password_screen.dart';
 import '../../Phamacist/auth/pharmacy_signup_screen.dart';
 import '../../Phamacist/pharmacy_dashboard.dart';
 
@@ -24,6 +24,8 @@ class _PharmacyLoginScreenState extends State<PharmacyLoginScreen> {
     });
 
     await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
 
     setState(() {
       isLoading = false;
@@ -192,7 +194,7 @@ class _PharmacyLoginScreenState extends State<PharmacyLoginScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.85),
+        color: Colors.white.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(20),
       ),
       child: TextField(

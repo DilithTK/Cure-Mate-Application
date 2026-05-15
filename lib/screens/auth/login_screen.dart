@@ -6,7 +6,7 @@ import '../../widgets/custom_button.dart';
 import '../../widgets/social_row.dart';
 import '../../core/services/firebase_auth_service.dart';
 import 'signup_screen.dart';
-import '../auth/ForgotPasswordScreen.dart';
+import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,6 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
       emailController.text.trim(),
       passwordController.text.trim(),
     );
+
+    if (!mounted) return;
 
     setState(() => isLoading = false);
 

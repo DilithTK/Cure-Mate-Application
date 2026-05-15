@@ -19,11 +19,12 @@ class PharmacyDashboardScreen extends StatefulWidget {
 }
 
 class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
-  String regNo ="";
+  String regNo = "";
 
   int totalCount = 0;
   int pendingCount = 0;
   int notificationCount = 0;
+  String selectedFilter = 'all';
 
   @override
   void initState() {
@@ -107,16 +108,17 @@ class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
         .collection('prescriptions')
         .get();
 
-    final pendingSnap = await FirebaseFirestore.instance
-        .collection('prescriptions')
-        .where('status', isEqualTo: 'Pending')
-        .get();
+    final pending = allSnap.docs.where((doc) {
+      final data = doc.data();
+      final status = data['status']?.toString().toLowerCase() ?? 'pending';
+      return status == 'pending';
+    }).length;
 
     if (!mounted) return;
 
     setState(() {
       totalCount = allSnap.docs.length;
-      pendingCount = pendingSnap.docs.length;
+      pendingCount = pending;
     });
   }
 
@@ -223,7 +225,7 @@ class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
             children: [
               // REG NO
               Text(
-                "Hello! ${regNo ?? ''}",
+                "Hello! $regNo",
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -234,7 +236,7 @@ class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
               const SizedBox(height: 6),
 
               Text(
-                regNo ?? "Loading registration...",
+                regNo.isEmpty ? "Loading registration..." : regNo,
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -251,6 +253,10 @@ class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
                     title: "Total",
                     value: totalCount,
                     color: AppColors.info,
+                    isSelected: selectedFilter == 'all',
+                    onTap: () {
+                      setState(() => selectedFilter = 'all');
+                    },
                   ),
 
                   const SizedBox(width: 10),
@@ -259,6 +265,10 @@ class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
                     title: "Pending",
                     value: pendingCount,
                     color: AppColors.warning,
+                    isSelected: selectedFilter == 'pending',
+                    onTap: () {
+                      setState(() => selectedFilter = 'pending');
+                    },
                   ),
 
                   const SizedBox(width: 10),
@@ -267,14 +277,22 @@ class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
                     title: "Completed",
                     value: totalCount - pendingCount,
                     color: AppColors.success,
+                    isSelected: selectedFilter == 'completed',
+                    onTap: () {
+                      setState(() => selectedFilter = 'completed');
+                    },
                   ),
                 ],
               ),
 
               const SizedBox(height: 24),
 
-              const Text(
-                "Recent Prescriptions",
+              Text(
+                selectedFilter == 'pending'
+                    ? "Pending Prescriptions"
+                    : selectedFilter == 'completed'
+                        ? "Completed Prescriptions"
+                        : "Recent Prescriptions",
 
                 style: TextStyle(
                   fontSize: 20,
@@ -301,7 +319,34 @@ class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
                       );
                     }
 
-                    final docs = snapshot.data!.docs;
+                    final docs = snapshot.data!.docs.where((doc) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      final status =
+                          data['status']?.toString().toLowerCase() ??
+                              'pending';
+
+                      if (selectedFilter == 'pending') {
+                        return status == 'pending';
+                      }
+
+                      if (selectedFilter == 'completed') {
+                        return status != 'pending';
+                      }
+
+                      return true;
+                    }).toList();
+
+                    if (docs.isEmpty) {
+                      return Center(
+                        child: Text(
+                          selectedFilter == 'pending'
+                              ? "No pending prescriptions"
+                              : selectedFilter == 'completed'
+                                  ? "No completed prescriptions"
+                                  : "No prescriptions found",
+                        ),
+                      );
+                    }
 
                     return ListView.builder(
                       itemCount: docs.length,
@@ -331,8 +376,8 @@ class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
                         return PrescriptionCard(
                           prescription: prescription,
 
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => PrescriptionDetailsScreen(
@@ -340,6 +385,8 @@ class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
                                 ),
                               ),
                             );
+
+                            await loadStats();
                           },
                         );
                       },
@@ -360,48 +407,59 @@ class _PharmacyDashboardScreenState extends State<PharmacyDashboardScreen> {
     required String title,
     required int value,
     required Color color,
+    required bool isSelected,
+    required VoidCallback onTap,
   }) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.all(16),
 
-        decoration: BoxDecoration(
-          color: Colors.white,
+          decoration: BoxDecoration(
+            color: isSelected ? color.withValues(alpha: 0.12) : Colors.white,
 
-          borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20),
 
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+            border: Border.all(
+              color: isSelected ? color : Colors.transparent,
+              width: 1.5,
             ),
-          ],
-        ),
 
-        child: Column(
-          children: [
-            Text(
-              value.toString(),
-
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-            ),
+            ],
+          ),
 
-            const SizedBox(height: 6),
+          child: Column(
+            children: [
+              Text(
+                value.toString(),
 
-            Text(
-              title,
-
-              style: const TextStyle(
-                color: AppColors.textMedium,
-                fontWeight: FontWeight.w500,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 6),
+
+              Text(
+                title,
+
+                style: const TextStyle(
+                  color: AppColors.textMedium,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

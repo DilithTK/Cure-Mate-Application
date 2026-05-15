@@ -200,6 +200,8 @@ class _PrescriptionDetailsScreenState
                       FieldValue.serverTimestamp(),
                 });
 
+                if (!context.mounted) return;
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text("Response Sent Successfully"),

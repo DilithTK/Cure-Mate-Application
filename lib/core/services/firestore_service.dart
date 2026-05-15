@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class FirestoreService {
   FirestoreService._();
@@ -54,9 +55,9 @@ class FirestoreService {
         'createdAt': FieldValue.serverTimestamp(),
       });
 
-      print("✅ Pharmacy saved successfully");
+      debugPrint("Pharmacy saved successfully");
     } catch (e) {
-      print("❌ Error saving pharmacy: $e");
+      debugPrint("Error saving pharmacy: $e");
       rethrow;
     }
   }

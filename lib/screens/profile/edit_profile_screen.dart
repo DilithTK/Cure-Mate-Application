@@ -35,6 +35,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     final doc = await firestore.getUser(user!.uid);
 
+    if (!mounted) return;
+
     if (doc.exists) {
       final data = doc.data() as Map<String, dynamic>;
 
@@ -58,6 +60,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       'mobile': _mobileController.text.trim(),
       'location': _locationController.text.trim(),
     });
+
+    if (!mounted) return;
 
     setState(() => isLoading = false);
 

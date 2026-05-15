@@ -17,8 +17,7 @@ class PrescriptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final status =
-        prescription.status ?? "Pending";
+    final status = prescription.status;
 
     final isPending =
         status.toLowerCase() == "pending";
@@ -48,7 +47,7 @@ class PrescriptionCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color:
-                  Colors.black.withOpacity(0.05),
+                  Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),

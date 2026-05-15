@@ -77,6 +77,8 @@ class _PharmacySignupScreenState extends State<PharmacySignupScreen> {
       locationController.text.trim(),
     );
 
+    if (!mounted) return;
+
     setState(() => isLoading = false);
 
     if (result == null) {
@@ -218,7 +220,7 @@ class _PharmacySignupScreenState extends State<PharmacySignupScreen> {
           hintText: hint,
           hintStyle: const TextStyle(color: Colors.white70),
           filled: true,
-          fillColor: Colors.white.withOpacity(0.15),
+          fillColor: Colors.white.withValues(alpha: 0.15),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,

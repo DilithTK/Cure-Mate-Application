@@ -67,6 +67,8 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
       dateTime: scheduledDate,
     );
 
+    if (!mounted) return;
+
     Navigator.pop(context, reminder);
   }
 
